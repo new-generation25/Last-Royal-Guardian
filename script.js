@@ -196,13 +196,13 @@ class PuzzleGame {
         const row = Math.floor(id / this.cols);
         const col = id % this.cols;
         
-        // 배경 이미지 위치 계산 (70px 단위)
-        const bgX = -(col * 70);
-        const bgY = -(row * 70); // 정사각형으로 복원
+        // 배경 이미지 위치 계산 (68px 단위)
+        const bgX = -(col * 68);
+        const bgY = -(row * 68); // 68px로 통일
         
         piece.style.backgroundImage = `url(${this.currentImage})`;
         piece.style.backgroundPosition = `${bgX}px ${bgY}px`;
-        piece.style.backgroundSize = '210px 350px'; // 배경 크기 복원
+        piece.style.backgroundSize = '204px 340px'; // 배경 크기 조정
         
         this.setupPieceDragEvents(piece);
         this.setupPieceTouchEvents(piece);
@@ -221,20 +221,21 @@ class PuzzleGame {
             const offsetX = e.clientX - rect.left;
             const offsetY = e.clientY - rect.top;
             
-            // 드래그 이미지 생성
+            // 드래그 이미지 생성 (더 간단한 방식)
             const dragImage = piece.cloneNode(true);
             dragImage.style.position = 'absolute';
             dragImage.style.top = '-1000px';
             dragImage.style.left = '-1000px';
-            dragImage.style.width = '70px';
-            dragImage.style.height = '70px'; // 정사각형으로 복원
-            dragImage.style.opacity = '0.8';
+            dragImage.style.width = '68px';
+            dragImage.style.height = '68px';
+            dragImage.style.opacity = '0.6';
             dragImage.style.pointerEvents = 'none';
-            dragImage.style.transform = 'none'; // 변형 제거
+            dragImage.style.transform = 'none';
+            dragImage.style.zIndex = '-1';
             document.body.appendChild(dragImage);
             
-            // 드래그 이미지 위치 설정 (실제 마우스 위치에 맞춤)
-            e.dataTransfer.setDragImage(dragImage, offsetX, offsetY);
+            // 드래그 이미지 위치 설정 (중앙 기준)
+            e.dataTransfer.setDragImage(dragImage, 34, 34);
             
             // 임시 요소 제거 (dragend에서 제거)
             piece.dragImage = dragImage;
