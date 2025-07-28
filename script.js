@@ -10,7 +10,7 @@ class PuzzleGame {
         this.originalImageData = null;
         
         // Figma 디자인에 맞는 고정 크기 설정
-        this.pieceSize = 50; // 퍼즐 조각 크기 (50x50px)
+        this.pieceSize = 60; // 퍼즐 조각 크기 (60x60px)
         this.gridWidth = 180; // 퍼즐 그리드 너비
         this.gridHeight = 300; // 퍼즐 그리드 높이
         

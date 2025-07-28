@@ -237,8 +237,8 @@ body {
 }
 
 .puzzle-slot {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     border: 1px dashed #999;
     border-radius: 8px;
     display: flex;
@@ -257,8 +257,8 @@ body {
 
 /* 퍼즐 조각 스타일 */
 .puzzle-piece {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     border-radius: 8px;
     border: 1px solid #333;
     background-repeat: no-repeat;

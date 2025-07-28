@@ -62,3 +62,4 @@ ENV/
 
 # Claude desktop config (개인 설정 파일)
 claude_desktop_config.json 
+.vercel
