@@ -118,7 +118,7 @@ body {
     flex: 1;
     display: grid;
     grid-template-columns: 70px 218px 70px; /* 중앙 영역 218px로 조정 */
-    grid-template-rows: 70px 362px 90px; /* 하단 영역 높이 유지 */
+    grid-template-rows: 70px 362px 70px; /* 하단 영역 70px로 조정 */
     gap: 4px; /* 간격 축소 */
     padding: 2px; /* 패딩 2px로 줄임 */
     justify-content: center;
@@ -181,7 +181,6 @@ body {
     background: #8B5CF6; /* 보라색 배경 */
     border-radius: 8px;
     padding: 4px; /* 여백 4px로 조정 */
-    border: 3px solid #8B5CF6; /* 보라색 경계 3px로 조정 */
 }
 
 .puzzle-grid {
