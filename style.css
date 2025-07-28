@@ -245,6 +245,11 @@ body {
     background: rgba(102, 126, 234, 0.1);
 }
 
+.grid-cell.occupied .puzzle-piece {
+    border: 4px inset #28a745 !important;
+    box-shadow: inset 0 2px 8px rgba(40, 167, 69, 0.3), 0 2px 8px rgba(0,0,0,0.08);
+}
+
 .grid-cell.occupied {
     background: #fff;
 }

@@ -88,28 +88,18 @@ class PuzzleGame {
     }
 
     calculateOptimalSizes() {
-        // 화면 크기 감지
+        // 아이폰 11 Pro 기준 고정 크기 설정
         const screenWidth = window.innerWidth;
         const screenHeight = window.innerHeight;
         
-        // 헤더, 버튼 공간 제외 (약 120px)
-        const availableWidth = screenWidth;
-        const availableHeight = Math.max(screenHeight - 120, 500); // 최소 높이 보장
+        // 고정 크기 설정 (아이폰 11 Pro 375px 기준)
+        const slotWidth = 70; // 좌우 퍼즐 슬롯 영역
+        const puzzleWidth = 210; // 가운데 퍼즐판 (70px × 3)
+        const puzzleHeight = 350; // 퍼즐판 높이 (70px × 5)
         
-        // 전체 화면을 5x7 그리드로 분할
-        // 가로: 좌측(1) + 퍼즐판(3) + 우측(1) = 5칸
-        // 세로: 상단(1) + 퍼즐판(5) + 하단(1) = 7칸
-        
-        const gridUnitWidth = availableWidth / 5;
-        const gridUnitHeight = availableHeight / 7;
-        
-        // 퍼즐판 크기 (3x5 그리드 단위)
-        const puzzleWidth = gridUnitWidth * 3;
-        const puzzleHeight = gridUnitHeight * 5;
-        
-        // 각 퍼즐 조각 크기 (퍼즐판을 3x5로 나눔) - 겹침 방지를 위해 여백 추가
-        const pieceWidth = Math.floor(puzzleWidth / 3) - 2; // 2px 여백
-        const pieceHeight = Math.floor(puzzleHeight / 5) - 2; // 2px 여백
+        // 각 퍼즐 조각 크기 (정확히 고정)
+        const pieceWidth = 70;
+        const pieceHeight = 70;
         
         this.optimalImageSize = {
             width: puzzleWidth,
@@ -121,16 +111,14 @@ class PuzzleGame {
             height: pieceHeight
         };
         
-        // 슬롯 영역 크기도 계산
+        // 슬롯 영역 크기
         this.slotAreaSize = {
-            width: gridUnitWidth,
-            height: gridUnitHeight
+            width: slotWidth,
+            height: 80 // 슬롯 높이
         };
         
-        console.log('그리드 기반 크기 계산:', {
+        console.log('고정 크기 설정:', {
             screen: [screenWidth, screenHeight],
-            available: [availableWidth, availableHeight],
-            gridUnit: [gridUnitWidth, gridUnitHeight],
             puzzle: this.optimalImageSize,
             piece: this.pieceSize,
             slotArea: this.slotAreaSize
@@ -458,7 +446,7 @@ class PuzzleGame {
         // 모바일에서만 터치 이벤트 활성화 (PC에서는 완전히 비활성화)
         if (!('ontouchstart' in window) || window.innerWidth > 768) return;
         
-        let startX, startY, currentX, currentY;
+        let startX, startY, currentX, currentY, initialLeft, initialTop;
         let isDragging = false;
         let originalParent, originalNextSibling;
 
@@ -484,10 +472,12 @@ class PuzzleGame {
             piece.style.zIndex = '1000';
             piece.style.pointerEvents = 'none';
             
-            // 초기 위치 설정
+            // 초기 위치 설정 및 저장
             const rect = piece.getBoundingClientRect();
-            piece.style.left = `${rect.left}px`;
-            piece.style.top = `${rect.top}px`;
+            initialLeft = rect.left;
+            initialTop = rect.top;
+            piece.style.left = `${initialLeft}px`;
+            piece.style.top = `${initialTop}px`;
         });
 
         piece.addEventListener('touchmove', (e) => {
@@ -498,9 +488,13 @@ class PuzzleGame {
             currentX = touch.clientX;
             currentY = touch.clientY;
             
-            // 퍼즐 조각 이동
-            piece.style.left = `${currentX - startX + parseInt(piece.style.left || 0)}px`;
-            piece.style.top = `${currentY - startY + parseInt(piece.style.top || 0)}px`;
+            // 터치 시작점으로부터 실제 이동량 계산
+            const deltaX = currentX - startX;
+            const deltaY = currentY - startY;
+            
+            // 초기 위치에서의 이동량으로 새 위치 계산
+            piece.style.left = `${initialLeft + deltaX}px`;
+            piece.style.top = `${initialTop + deltaY}px`;
             
             // 드롭 영역 하이라이트
             this.highlightDropZones(currentX, currentY);
