@@ -306,10 +306,11 @@ class PuzzleGame {
         piece.dataset.position = row * this.cols + col;
         piece.draggable = true;
 
-        // 모바일에서도 적절한 크기 계산 (3:5 비율 유지)
-        const containerWidth = Math.min(window.innerWidth * 0.7, 350);
-        const pieceWidth = containerWidth / this.cols; // 3열
-        const pieceHeight = pieceWidth * (5/3); // 5행이므로 높이는 더 길어야 함
+        // 그리드와 동일한 크기 계산
+        const gridElement = document.querySelector('.puzzle-grid');
+        const gridRect = gridElement.getBoundingClientRect();
+        const pieceWidth = (gridRect.width - 8) / 3; // gap 2px * 4 = 8px
+        const pieceHeight = (gridRect.height - 10) / 5; // gap 2px * 6 = 12px, 약간 여유
         
         // 실제 그리드 크기
         const totalWidth = pieceWidth * this.cols;
@@ -331,15 +332,15 @@ class PuzzleGame {
         const backgroundX = -col * (scaledWidth / this.cols);
         const backgroundY = -row * (scaledHeight / this.rows);
         
-        // 조각 크기를 그리드 셀 크기에 맞춤
+        // 조각을 그리드 셀과 정확히 같은 크기로 설정
         piece.style.width = `${pieceWidth}px`;
         piece.style.height = `${pieceHeight}px`;
         piece.style.backgroundImage = `url(${this.currentImage})`;
         piece.style.backgroundSize = `${scaledWidth}px ${scaledHeight}px`;
         piece.style.backgroundPosition = `${backgroundX}px ${backgroundY}px`;
         piece.style.backgroundRepeat = 'no-repeat';
-        piece.style.position = 'relative';
-        piece.style.zIndex = '1';
+        piece.style.border = '1px solid #333';
+        piece.style.boxSizing = 'border-box';
         
         this.setupDragAndDrop(piece);
         this.setupTouchEvents(piece);
