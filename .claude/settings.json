@@ -1,0 +1,21 @@
+{
+  "theme": "high-contrast",
+  "colors": {
+    "userInput": "#00FF00",
+    "assistantOutput": "#FFFFFF",
+    "systemMessages": "#FFFF00",
+    "toolOutput": "#00FFFF",
+    "background": "#000000"
+  },
+  "display": {
+    "userInputPrefix": "🔵 User: ",
+    "assistantPrefix": "🤖 Claude: ",
+    "highlightUserInput": true,
+    "separateUserMessages": true
+  },
+  "formatting": {
+    "boldUserInput": true,
+    "italicAssistantOutput": false,
+    "underlineToolCalls": true
+  }
+}

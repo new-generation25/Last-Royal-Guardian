@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>퍼즐 게임 - Last Royal Guardian</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 게임 시작 인트로 -->
+    <div class="game-intro" id="gameIntro">
+        <div class="intro-content">
+            <img id="introImage" src="" alt="원본 이미지">
+            <p class="intro-message">퍼즐게임이 시작됩니다.<br>가야의 유물을 완성하세요.</p>
+        </div>
+    </div>
+
+    <div class="game-container">
+        <header class="game-header">
+            <h1>퍼즐 게임</h1>
+            <div class="controls">
+                <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                <button id="uploadBtn" class="btn">이미지 업로드</button>
+                <button id="hintBtn" class="btn">힌트보기 (<span id="hintCount">5</span>)</button>
+                <button id="shuffleBtn" class="btn">섞기</button>
+            </div>
+        </header>
+
+        <main class="game-board">
+            <!-- 상단 퍼즐 영역 -->
+            <div class="puzzle-area top-area">
+                <div class="puzzle-slots" id="topSlots"></div>
+            </div>
+
+            <!-- 중앙 영역 (좌측 퍼즐 + 맞춤판 + 우측 퍼즐) -->
+            <div class="middle-section">
+                <div class="puzzle-area left-area">
+                    <div class="puzzle-slots" id="leftSlots"></div>
+                </div>
+                
+                <div class="puzzle-board">
+                    <div class="puzzle-grid" id="puzzleGrid"></div>
+                    <div class="original-image-overlay" id="originalOverlay">
+                        <img id="originalImage" src="" alt="원본 이미지">
+                    </div>
+                </div>
+                
+                <div class="puzzle-area right-area">
+                    <div class="puzzle-slots" id="rightSlots"></div>
+                </div>
+            </div>
+
+            <!-- 하단 퍼즐 영역 -->
+            <div class="puzzle-area bottom-area">
+                <div class="puzzle-slots" id="bottomSlots"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
