@@ -13,6 +13,9 @@ class PuzzleGame {
         this.setupEventListeners();
         this.createPuzzleGrid();
         
+        // 기본 이미지 자동 로드
+        this.loadDefaultImage();
+        
         // 윈도우 리사이즈 시 퍼즐 조각 크기만 조정 (재생성하지 않음)
         let resizeTimeout;
         window.addEventListener('resize', () => {
@@ -75,6 +78,22 @@ class PuzzleGame {
         this.shuffleBtn.addEventListener('click', () => {
             this.shufflePieces();
         });
+    }
+
+    loadDefaultImage() {
+        // 기본 이미지 로드
+        const defaultImage = new Image();
+        defaultImage.onload = () => {
+            this.currentImage = 'gima.png';
+            this.originalImageData = defaultImage;
+            this.originalImage.src = this.currentImage;
+            this.createPuzzlePieces();
+            this.showGameIntro();
+        };
+        defaultImage.onerror = () => {
+            console.log('기본 이미지 로드 실패, 사용자가 이미지를 업로드할 수 있습니다.');
+        };
+        defaultImage.src = 'gima.png';
     }
 
     createPuzzleGrid() {
