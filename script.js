@@ -297,8 +297,11 @@ class PuzzleGame {
         piece.dataset.position = row * this.cols + col;
         piece.draggable = true;
 
-        // 반응형 퍼즐 조각 크기 (뷰포트 기준)
-        const pieceSize = Math.min(window.innerWidth * 0.08, window.innerHeight * 0.08, 80);
+        // 3:5 비율에 맞는 정사각형 퍼즐 조각 크기
+        const gridWidth = Math.min(window.innerWidth * 0.6, 300);
+        const gridHeight = gridWidth * (5/3); // 3:5 비율
+        const pieceSize = gridWidth / 3; // 3열이므로 각 조각은 1/3 크기
+        
         const totalWidth = pieceSize * this.cols;
         const totalHeight = pieceSize * this.rows;
 
@@ -337,6 +340,9 @@ class PuzzleGame {
     }
 
     setupTouchEvents(piece) {
+        // 모바일에서만 터치 이벤트 활성화
+        if (!('ontouchstart' in window)) return;
+        
         let startX, startY, currentX, currentY;
         let isDragging = false;
         let originalParent, originalNextSibling;
