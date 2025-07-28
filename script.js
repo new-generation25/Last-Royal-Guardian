@@ -92,7 +92,7 @@ class PuzzleGame {
         
         defaultImage.onload = () => {
             console.log('기본 이미지 로드 성공:', defaultImage.width, 'x', defaultImage.height);
-            this.currentImage = 'gima.png';
+            this.currentImage = 'gima2.png';
             this.originalImageData = defaultImage;
             this.originalImage.src = this.currentImage;
             this.introImage.src = this.currentImage;
@@ -112,7 +112,7 @@ class PuzzleGame {
         };
         
         // 이미지 로드 시작
-        defaultImage.src = 'gima.png';
+        defaultImage.src = 'gima2.png';
     }
 
     createEmptyPuzzleGrid() {
@@ -296,44 +296,31 @@ class PuzzleGame {
         piece.dataset.position = row * this.cols + col;
         piece.draggable = true;
 
-        // 반응형 퍼즐 조각 크기 동적 계산
-        const getPieceSize = () => {
-            if (window.innerWidth <= 480) return 48;
-            if (window.innerWidth <= 768) return 58;
-            return 46;
-        };
-        
-        const pieceSize = getPieceSize();
-        
-        // 전체 퍼즐 크기 계산
-        const totalWidth = pieceSize * this.cols;
-        const totalHeight = pieceSize * this.rows;
-        
+        // 고정 퍼즐 조각 크기 (3:5 비율)
+        const pieceWidth = 60;
+        const pieceHeight = 100;
+        const totalWidth = pieceWidth * this.cols;
+        const totalHeight = pieceHeight * this.rows;
+
         // 이미지를 퍼즐 전체 크기에 맞게 스케일링
         const imageAspect = img.width / img.height;
         const puzzleAspect = totalWidth / totalHeight;
-        
         let scaledWidth, scaledHeight;
-        
         if (imageAspect > puzzleAspect) {
-            // 이미지가 더 넓음 - 높이 기준으로 맞춤
             scaledHeight = totalHeight;
             scaledWidth = scaledHeight * imageAspect;
         } else {
-            // 이미지가 더 높음 - 너비 기준으로 맞춤
             scaledWidth = totalWidth;
             scaledHeight = scaledWidth / imageAspect;
         }
-        
         const backgroundX = -col * (scaledWidth / this.cols);
         const backgroundY = -row * (scaledHeight / this.rows);
-        
+        piece.style.width = `${pieceWidth}px`;
+        piece.style.height = `${pieceHeight}px`;
         piece.style.backgroundImage = `url(${this.currentImage})`;
         piece.style.backgroundSize = `${scaledWidth}px ${scaledHeight}px`;
         piece.style.backgroundPosition = `${backgroundX}px ${backgroundY}px`;
-
         this.setupDragAndDrop(piece);
-        
         return piece;
     }
 
@@ -543,79 +530,7 @@ class PuzzleGame {
     }
 
     resizePuzzlePieces() {
-        if (!this.currentImage || this.puzzlePieces.length === 0) return;
-
-        const img = new Image();
-        img.onload = () => {
-            // 반응형 퍼즐 조각 크기 동적 계산
-            const getPieceSize = () => {
-                if (window.innerWidth <= 480) return 48;
-                if (window.innerWidth <= 768) return 58;
-                return 46;
-            };
-            
-            const pieceSize = getPieceSize();
-            
-            // 전체 퍼즐 크기 계산
-            const totalWidth = pieceSize * this.cols;
-            const totalHeight = pieceSize * this.rows;
-            
-            // 이미지를 퍼즐 전체 크기에 맞게 스케일링
-            const imageAspect = img.width / img.height;
-            const puzzleAspect = totalWidth / totalHeight;
-            
-            let scaledWidth, scaledHeight;
-            
-            if (imageAspect > puzzleAspect) {
-                // 이미지가 더 넓음 - 높이 기준으로 맞춤
-                scaledHeight = totalHeight;
-                scaledWidth = scaledHeight * imageAspect;
-            } else {
-                // 이미지가 더 높음 - 너비 기준으로 맞춤
-                scaledWidth = totalWidth;
-                scaledHeight = scaledWidth / imageAspect;
-            }
-            
-            // 모든 퍼즐 조각의 크기와 배경 위치 업데이트
-            this.puzzlePieces.forEach(piece => {
-                const row = parseInt(piece.dataset.row);
-                const col = parseInt(piece.dataset.col);
-                
-                const backgroundX = -col * (scaledWidth / this.cols);
-                const backgroundY = -row * (scaledHeight / this.rows);
-                
-                piece.style.width = `${pieceSize}px`;
-                piece.style.height = `${pieceSize}px`;
-                piece.style.backgroundSize = `${scaledWidth}px ${scaledHeight}px`;
-                piece.style.backgroundPosition = `${backgroundX}px ${backgroundY}px`;
-            });
-            
-            // 슬롯 크기도 업데이트
-            const slots = document.querySelectorAll('.puzzle-slot');
-            slots.forEach(slot => {
-                slot.style.width = `${pieceSize + 1}px`;
-                slot.style.height = `${pieceSize + 1}px`;
-            });
-            
-            // 격자 셀 크기도 업데이트
-            this.gridCells.forEach(cell => {
-                cell.style.width = `${pieceSize}px`;
-                cell.style.height = `${pieceSize}px`;
-            });
-            
-            // 퍼즐 그리드 크기 업데이트
-            this.puzzleGrid.style.width = `${totalWidth}px`;
-            this.puzzleGrid.style.height = `${totalHeight}px`;
-            
-            // 모바일에서 좌우 영역이 제대로 표시되도록 강제 설정
-            if (window.innerWidth <= 768) {
-                this.leftSlots.style.display = 'flex';
-                this.leftSlots.style.visibility = 'visible';
-                this.rightSlots.style.display = 'flex';
-                this.rightSlots.style.visibility = 'visible';
-            }
-        };
-        img.src = this.currentImage;
+        // 고정 크기이므로 리사이즈 불필요
     }
 
     resetHints() {
