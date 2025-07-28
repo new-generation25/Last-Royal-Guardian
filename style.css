@@ -120,7 +120,7 @@ body {
     grid-template-columns: 70px 218px 70px; /* 중앙 영역 218px로 조정 */
     grid-template-rows: 70px 362px 90px; /* 하단 영역 높이 유지 */
     gap: 4px; /* 간격 축소 */
-    padding: 5px; /* 패딩 더 줄임 */
+    padding: 2px; /* 패딩 2px로 줄임 */
     justify-content: center;
     align-content: flex-start; /* 상단 정렬로 변경 */
     min-height: calc(100vh - 80px); /* 헤더 높이에 맞춤 */
