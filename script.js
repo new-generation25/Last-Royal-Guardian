@@ -83,17 +83,38 @@ class PuzzleGame {
     loadDefaultImage() {
         // 기본 이미지 로드
         const defaultImage = new Image();
+        defaultImage.crossOrigin = 'anonymous';
+        
         defaultImage.onload = () => {
+            console.log('기본 이미지 로드 성공:', defaultImage.width, 'x', defaultImage.height);
             this.currentImage = 'gima.png';
             this.originalImageData = defaultImage;
             this.originalImage.src = this.currentImage;
             this.createPuzzlePieces();
             this.showGameIntro();
         };
-        defaultImage.onerror = () => {
-            console.log('기본 이미지 로드 실패, 사용자가 이미지를 업로드할 수 있습니다.');
+        
+        defaultImage.onerror = (error) => {
+            console.error('기본 이미지 로드 실패:', error);
+            // 기본 이미지 로드 실패 시 빈 퍼즐 그리드만 표시
+            this.createEmptyPuzzleGrid();
         };
+        
+        // 이미지 로드 시작
         defaultImage.src = 'gima.png';
+        console.log('기본 이미지 로드 시작...');
+    }
+
+    createEmptyPuzzleGrid() {
+        // 빈 퍼즐 그리드 생성 (이미지 없이)
+        console.log('빈 퍼즐 그리드 생성');
+        this.puzzleGrid.style.border = '2px dashed #ccc';
+        this.puzzleGrid.style.backgroundColor = '#f9f9f9';
+        
+        // 격자 셀에 안내 텍스트 추가
+        this.gridCells.forEach((cell, index) => {
+            cell.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #999; font-size: 10px;">${index + 1}</div>`;
+        });
     }
 
     createPuzzleGrid() {
@@ -163,11 +184,21 @@ class PuzzleGame {
     }
 
     createPuzzlePieces() {
+        console.log('퍼즐 조각 생성 시작...');
         this.clearAllSlots();
         this.puzzlePieces = [];
 
+        if (!this.currentImage) {
+            console.error('현재 이미지가 없습니다.');
+            return;
+        }
+
         const img = new Image();
+        img.crossOrigin = 'anonymous';
+        
         img.onload = () => {
+            console.log('이미지 로드 완료, 퍼즐 조각 생성 중...', img.width, 'x', img.height);
+            
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             
@@ -185,8 +216,14 @@ class PuzzleGame {
                 }
             }
             
+            console.log('퍼즐 조각 생성 완료:', this.puzzlePieces.length, '개');
             this.distributePieces();
         };
+        
+        img.onerror = (error) => {
+            console.error('퍼즐 조각 생성 중 이미지 로드 실패:', error);
+        };
+        
         img.src = this.currentImage;
     }
 
