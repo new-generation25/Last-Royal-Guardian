@@ -125,6 +125,7 @@ class PuzzleGame {
                         originalParent.classList.add('occupied');
                         this.updatePieceStatus(existingPiece, originalParent);
                     } else {
+                        // 슬롯에서 온 경우 빈 슬롯으로 이동
                         this.movePieceToSlot(existingPiece);
                     }
                 }
@@ -227,6 +228,7 @@ class PuzzleGame {
             dragImage.style.height = '70px';
             dragImage.style.opacity = '0.8';
             dragImage.style.pointerEvents = 'none';
+            dragImage.style.transform = 'none'; // 변형 제거
             document.body.appendChild(dragImage);
             
             // 드래그 이미지 위치 설정 (실제 마우스 위치에 맞춤)
@@ -326,7 +328,15 @@ class PuzzleGame {
                 // 기존 조각이 있으면 교체
                 const existingPiece = dropZone.querySelector('.puzzle-piece');
                 if (existingPiece) {
-                    this.movePieceToSlot(existingPiece);
+                    // 기존 조각을 드래그한 조각의 원래 위치로 이동
+                    const originalParent = piece.parentElement;
+                    if (originalParent && originalParent.classList.contains('grid-cell')) {
+                        originalParent.appendChild(existingPiece);
+                        originalParent.classList.add('occupied');
+                        this.updatePieceStatus(existingPiece, originalParent);
+                    } else {
+                        this.movePieceToSlot(existingPiece);
+                    }
                 }
                 
                 // 그리드 셀에 배치
