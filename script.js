@@ -88,31 +88,32 @@ class PuzzleGame {
         this.createEmptyPuzzleGrid();
         
         const defaultImage = new Image();
-        defaultImage.crossOrigin = 'anonymous';
+        // CORS 문제 해결을 위해 crossOrigin 제거
+        // defaultImage.crossOrigin = 'anonymous';
         
         defaultImage.onload = () => {
             console.log('기본 이미지 로드 성공:', defaultImage.width, 'x', defaultImage.height);
-            this.currentImage = 'gima2.png';
+            this.currentImage = './gima2.png';
             this.originalImageData = defaultImage;
             this.originalImage.src = this.currentImage;
             this.introImage.src = this.currentImage;
             
-            // 3초 후 퍼즐 조각 생성
-            setTimeout(() => {
-                this.createPuzzlePieces();
-                this.showGameIntro();
-            }, 1000);
+            // 퍼즐 조각 생성
+            this.createPuzzlePieces();
+            this.showGameIntro();
         };
         
         defaultImage.onerror = (error) => {
             console.error('기본 이미지 로드 실패:', error);
-            // 기본 이미지 로드 실패 시에도 게임 진행 가능하도록
+            console.log('색상 퍼즐로 대체합니다.');
+            // 기본 이미지 로드 실패 시 색상 퍼즐로 진행
             this.currentImage = null;
+            this.createPuzzlePieces();
             this.showGameIntro();
         };
         
-        // 이미지 로드 시작
-        defaultImage.src = 'gima2.png';
+        // 이미지 로드 시작 - 상대 경로로 수정
+        defaultImage.src = './gima2.png';
     }
 
     createEmptyPuzzleGrid() {
@@ -150,7 +151,7 @@ class PuzzleGame {
         cell.addEventListener('dragover', (e) => {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
-            if (!cell.hasChildNodes()) {
+            if (!cell.querySelector('.puzzle-piece')) {
                 cell.classList.add('drop-zone');
             }
         });
@@ -168,7 +169,7 @@ class PuzzleGame {
             console.log('드롭된 조각 ID:', pieceId);
             const piece = document.getElementById(pieceId);
             
-            if (piece && !cell.hasChildNodes()) {
+            if (piece && !cell.querySelector('.puzzle-piece')) {
                 console.log('조각 배치:', pieceId, '-> 셀', cell.dataset.position);
                 this.placePiece(piece, cell);
             } else {
@@ -305,13 +306,14 @@ class PuzzleGame {
         piece.dataset.position = row * this.cols + col;
         piece.draggable = true;
 
-        // 3:5 비율에 맞는 정사각형 퍼즐 조각 크기
-        const gridWidth = Math.min(window.innerWidth * 0.6, 300);
-        const gridHeight = gridWidth * (5/3); // 3:5 비율
-        const pieceSize = gridWidth / 3; // 3열이므로 각 조각은 1/3 크기
+        // 모바일에서도 적절한 크기 계산 (3:5 비율 유지)
+        const containerWidth = Math.min(window.innerWidth * 0.7, 350);
+        const pieceWidth = containerWidth / this.cols; // 3열
+        const pieceHeight = pieceWidth * (5/3); // 5행이므로 높이는 더 길어야 함
         
-        const totalWidth = pieceSize * this.cols;
-        const totalHeight = pieceSize * this.rows;
+        // 실제 그리드 크기
+        const totalWidth = pieceWidth * this.cols;
+        const totalHeight = pieceHeight * this.rows;
 
         // 이미지를 퍼즐 전체 크기에 맞게 스케일링
         const imageAspect = img.width / img.height;
@@ -324,13 +326,21 @@ class PuzzleGame {
             scaledWidth = totalWidth;
             scaledHeight = scaledWidth / imageAspect;
         }
+        
+        // 배경 위치 계산
         const backgroundX = -col * (scaledWidth / this.cols);
         const backgroundY = -row * (scaledHeight / this.rows);
-        piece.style.width = `${pieceSize}px`;
-        piece.style.height = `${pieceSize}px`;
+        
+        // 조각 크기를 그리드 셀 크기에 맞춤
+        piece.style.width = `${pieceWidth}px`;
+        piece.style.height = `${pieceHeight}px`;
         piece.style.backgroundImage = `url(${this.currentImage})`;
         piece.style.backgroundSize = `${scaledWidth}px ${scaledHeight}px`;
         piece.style.backgroundPosition = `${backgroundX}px ${backgroundY}px`;
+        piece.style.backgroundRepeat = 'no-repeat';
+        piece.style.position = 'relative';
+        piece.style.zIndex = '1';
+        
         this.setupDragAndDrop(piece);
         this.setupTouchEvents(piece);
         return piece;
@@ -453,10 +463,10 @@ class PuzzleGame {
 
     findDropZone(x, y) {
         const element = document.elementFromPoint(x, y);
-        if (element && element.classList.contains('grid-cell') && !element.hasChildNodes()) {
+        if (element && element.classList.contains('grid-cell') && !element.querySelector('.puzzle-piece')) {
             return element;
         }
-        if (element && element.classList.contains('puzzle-slot') && !element.hasChildNodes()) {
+        if (element && element.classList.contains('puzzle-slot') && !element.querySelector('.puzzle-piece')) {
             return element;
         }
         return null;
