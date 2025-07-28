@@ -298,8 +298,8 @@ class PuzzleGame {
 
         // 반응형 퍼즐 조각 크기 동적 계산
         const getPieceSize = () => {
-            if (window.innerWidth <= 480) return 30;
-            if (window.innerWidth <= 768) return 36;
+            if (window.innerWidth <= 480) return 48;
+            if (window.innerWidth <= 768) return 58;
             return 46;
         };
         
@@ -537,8 +537,8 @@ class PuzzleGame {
         img.onload = () => {
             // 반응형 퍼즐 조각 크기 동적 계산
             const getPieceSize = () => {
-                if (window.innerWidth <= 480) return 30;
-                if (window.innerWidth <= 768) return 36;
+                if (window.innerWidth <= 480) return 48;
+                if (window.innerWidth <= 768) return 58;
                 return 46;
             };
             
