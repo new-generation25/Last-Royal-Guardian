@@ -7,6 +7,7 @@ class PuzzleGame {
         this.currentImage = null;
         this.puzzlePieces = [];
         this.gridCells = [];
+        this.originalImageUsed = false; // 원본보기 사용 여부
         
         this.initializeElements();
         this.setupEventListeners();
@@ -20,7 +21,6 @@ class PuzzleGame {
         this.imageInput = document.getElementById('imageInput');
         this.uploadBtn = document.getElementById('uploadBtn');
         this.hintBtn = document.getElementById('hintBtn');
-        this.shuffleBtn = document.getElementById('shuffleBtn');
         this.showImageBtn = document.getElementById('showImageBtn');
         this.hintCount = document.getElementById('hintCount');
         this.puzzleGrid = document.getElementById('puzzleGrid');
@@ -35,11 +35,11 @@ class PuzzleGame {
     }
 
     setupEventListeners() {
-        // 인트로 화면 클릭으로 게임 시작
-        this.gameIntro.addEventListener('click', () => {
+        // 인트로 화면 3초 후 자동 시작
+        setTimeout(() => {
             this.hideIntro();
             this.loadDefaultImage();
-        });
+        }, 3000);
 
         // 파일 업로드
         this.uploadBtn.addEventListener('click', () => {
@@ -54,11 +54,15 @@ class PuzzleGame {
 
         // 게임 버튼들
         this.hintBtn.addEventListener('click', () => this.showHint());
-        this.shuffleBtn.addEventListener('click', () => this.shufflePieces());
         
-        // 원본 이미지 보기
+        // 원본 이미지 보기 (1회만 사용 가능)
         this.showImageBtn.addEventListener('click', () => {
-            this.originalOverlay.classList.add('show');
+            if (!this.originalImageUsed) {
+                this.originalOverlay.classList.add('show');
+                this.originalImageUsed = true;
+                this.showImageBtn.disabled = true;
+                this.showImageBtn.textContent = '원본 보기 (사용됨)';
+            }
         });
 
         this.originalOverlay.addEventListener('click', () => {
@@ -110,11 +114,33 @@ class PuzzleGame {
             const pieceId = e.dataTransfer.getData('text/plain');
             const piece = document.getElementById(pieceId);
             
-            if (piece && !cell.querySelector('.puzzle-piece')) {
+            if (piece) {
+                // 기존 조각이 있으면 교체
+                const existingPiece = cell.querySelector('.puzzle-piece');
+                if (existingPiece) {
+                    // 기존 조각을 원래 위치로 이동
+                    this.movePieceToSlot(existingPiece);
+                }
+                
                 this.placePieceInCell(piece, cell);
                 this.checkCompletion();
             }
         });
+    }
+
+    movePieceToSlot(piece) {
+        // 빈 슬롯 찾기
+        const allSlots = [
+            ...this.topSlots.querySelectorAll('.puzzle-slot'),
+            ...this.leftSlots.querySelectorAll('.puzzle-slot'),
+            ...this.rightSlots.querySelectorAll('.puzzle-slot'),
+            ...this.bottomSlots.querySelectorAll('.puzzle-slot')
+        ];
+        
+        const emptySlot = allSlots.find(slot => !slot.querySelector('.puzzle-piece'));
+        if (emptySlot) {
+            emptySlot.appendChild(piece);
+        }
     }
 
     loadDefaultImage() {
@@ -255,8 +281,13 @@ class PuzzleGame {
             // 드롭 영역 찾기
             const dropZone = this.findDropZone(currentX, currentY);
             
-            if (dropZone && dropZone.classList.contains('grid-cell') && 
-                !dropZone.querySelector('.puzzle-piece')) {
+            if (dropZone && dropZone.classList.contains('grid-cell')) {
+                // 기존 조각이 있으면 교체
+                const existingPiece = dropZone.querySelector('.puzzle-piece');
+                if (existingPiece) {
+                    this.movePieceToSlot(existingPiece);
+                }
+                
                 // 그리드 셀에 배치
                 this.placePieceInCell(piece, dropZone);
                 this.checkCompletion();
@@ -321,9 +352,13 @@ class PuzzleGame {
         const cellId = parseInt(cell.dataset.correctId);
         
         if (pieceId === cellId) {
-            // 올바른 위치
-            piece.style.border = '4px inset #28a745';
-            piece.style.boxShadow = 'inset 0 2px 8px rgba(40, 167, 69, 0.3), 0 2px 8px rgba(0, 0, 0, 0.1)';
+            // 올바른 위치 - 초록색 테두리
+            piece.classList.remove('incorrect');
+            piece.classList.add('correct');
+        } else {
+            // 틀린 위치 - 흰색 테두리
+            piece.classList.remove('correct');
+            piece.classList.add('incorrect');
         }
     }
 
@@ -406,52 +441,39 @@ class PuzzleGame {
         });
     }
 
-    shufflePieces() {
-        // 모든 조각들을 수집
-        const allPieces = this.puzzlePieces.filter(piece => 
-            !piece.parentElement.classList.contains('grid-cell')
-        );
-        
-        // 조각들을 슬롯에서 제거
-        allPieces.forEach(piece => {
-            if (piece.parentElement.classList.contains('puzzle-slot')) {
-                piece.remove();
-            }
-        });
-        
-        // 다시 배치
-        this.distributePieces();
-    }
-
     showHint() {
         if (this.hintsLeft <= 0) return;
         
-        // 잘못 배치된 조각 찾기
-        const wrongPieces = [];
-        this.gridCells.forEach(cell => {
-            const piece = cell.querySelector('.puzzle-piece');
-            if (piece) {
-                const pieceId = parseInt(piece.dataset.correctId);
-                const cellId = parseInt(cell.dataset.correctId);
-                if (pieceId !== cellId) {
-                    wrongPieces.push(piece);
-                }
-            }
-        });
-        
-        // 빈 올바른 위치 찾기
-        const emptyCorrectCells = this.gridCells.filter(cell => 
-            !cell.querySelector('.puzzle-piece')
+        // 슬롯에 있는 퍼즐 조각들 중 하나를 랜덤 선택
+        const slotPieces = this.puzzlePieces.filter(piece => 
+            piece.parentElement && piece.parentElement.classList.contains('puzzle-slot')
         );
         
-        if (wrongPieces.length > 0) {
-            // 잘못된 조각 하이라이트
-            const randomWrong = wrongPieces[Math.floor(Math.random() * wrongPieces.length)];
-            this.highlightPiece(randomWrong);
-        } else if (emptyCorrectCells.length > 0) {
-            // 빈 올바른 위치 하이라이트
-            const randomEmpty = emptyCorrectCells[Math.floor(Math.random() * emptyCorrectCells.length)];
-            this.highlightCell(randomEmpty);
+        if (slotPieces.length > 0) {
+            // 랜덤으로 하나 선택
+            const randomPiece = slotPieces[Math.floor(Math.random() * slotPieces.length)];
+            const correctId = parseInt(randomPiece.dataset.correctId);
+            
+            // 올바른 위치의 셀 찾기
+            const correctCell = this.gridCells.find(cell => 
+                parseInt(cell.dataset.correctId) === correctId
+            );
+            
+            if (correctCell && !correctCell.querySelector('.puzzle-piece')) {
+                // 조각을 올바른 위치로 이동
+                correctCell.appendChild(randomPiece);
+                correctCell.classList.add('occupied');
+                randomPiece.classList.remove('incorrect');
+                randomPiece.classList.add('correct');
+                
+                // 힌트 효과
+                randomPiece.classList.add('hint-highlight');
+                setTimeout(() => {
+                    randomPiece.classList.remove('hint-highlight');
+                }, 2000);
+                
+                this.checkCompletion();
+            }
         }
         
         this.hintsLeft--;
@@ -459,21 +481,8 @@ class PuzzleGame {
         
         if (this.hintsLeft === 0) {
             this.hintBtn.disabled = true;
+            this.hintBtn.textContent = '힌트 (0)';
         }
-    }
-
-    highlightPiece(piece) {
-        piece.classList.add('hint-highlight');
-        setTimeout(() => {
-            piece.classList.remove('hint-highlight');
-        }, 2000);
-    }
-
-    highlightCell(cell) {
-        cell.classList.add('hint-highlight');
-        setTimeout(() => {
-            cell.classList.remove('hint-highlight');
-        }, 2000);
     }
 
     checkCompletion() {
@@ -501,7 +510,7 @@ class PuzzleGame {
         
         // 축하 메시지
         setTimeout(() => {
-            alert('축하합니다! 가야 기마인물형 토기 퍼즐을 완성하셨습니다!');
+            alert('축하합니다! 가야 기마인물형 토기 퍼즐을 완성하셨습니다! 🎉');
             this.puzzleGrid.classList.remove('puzzle-complete');
         }, 2400);
     }

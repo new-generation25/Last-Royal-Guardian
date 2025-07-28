@@ -119,8 +119,8 @@ body {
     display: grid;
     grid-template-columns: 70px 210px 70px;
     grid-template-rows: 70px 350px 70px;
-    gap: 5px;
-    padding: 10px;
+    gap: 8px;
+    padding: 15px;
     justify-content: center;
     align-content: center;
     min-height: calc(100vh - 120px);
@@ -138,7 +138,7 @@ body {
 .top-area .puzzle-slots {
     display: flex;
     flex-direction: row;
-    gap: 2px;
+    gap: 8px;
     width: 100%;
     height: 100%;
     justify-content: center;
@@ -151,7 +151,7 @@ body {
     grid-row: 2;
     display: grid;
     grid-template-columns: 70px 210px 70px;
-    gap: 5px;
+    gap: 8px;
 }
 
 /* 좌측 영역 */
@@ -165,7 +165,7 @@ body {
 .left-area .puzzle-slots {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 8px;
     width: 100%;
     height: 100%;
     justify-content: center;
@@ -187,7 +187,7 @@ body {
     grid-template-columns: repeat(3, 70px);
     grid-template-rows: repeat(5, 70px);
     gap: 1px;
-    border: 3px solid #333;
+    border: 2px solid #333;
     border-radius: 8px;
     background: #f5f5f5;
 }
@@ -220,7 +220,7 @@ body {
 .right-area .puzzle-slots {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 8px;
     width: 100%;
     height: 100%;
     justify-content: center;
@@ -239,7 +239,7 @@ body {
 .bottom-area .puzzle-slots {
     display: flex;
     flex-direction: row;
-    gap: 2px;
+    gap: 8px;
     width: 100%;
     height: 100%;
     justify-content: center;
@@ -269,7 +269,7 @@ body {
 .puzzle-piece {
     width: 70px;
     height: 70px;
-    border: 2px solid #333;
+    border: 1px solid #333;
     border-radius: 5px;
     background-repeat: no-repeat;
     background-size: 210px 350px;
@@ -292,10 +292,16 @@ body {
     z-index: 1000;
 }
 
-/* 완성된 조각 스타일 */
-.grid-cell.occupied .puzzle-piece {
-    border: 4px inset #28a745 !important;
-    box-shadow: inset 0 2px 8px rgba(40, 167, 69, 0.3), 0 2px 8px rgba(0, 0, 0, 0.1);
+/* 올바른 위치에 놓인 조각 - 초록색 테두리 */
+.grid-cell.occupied .puzzle-piece.correct {
+    border: 2px solid #28a745 !important;
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+}
+
+/* 틀린 위치에 놓인 조각 - 흰색 테두리 */
+.grid-cell.occupied .puzzle-piece.incorrect {
+    border: 2px solid #fff !important;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
 /* 원본 이미지 오버레이 */
