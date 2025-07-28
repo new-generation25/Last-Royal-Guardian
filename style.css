@@ -296,18 +296,27 @@ body {
     }
     
     .middle-section {
-        flex-direction: column;
+        flex-direction: row;
         gap: 8px;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .left-area,
+    .right-area {
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
     }
     
     .left-area .puzzle-slots,
     .right-area .puzzle-slots {
-        flex-direction: row;
-        gap: 2px;
-        max-width: 100%;
-        overflow-x: auto;
-        padding: 5px 0;
-        justify-content: center;
+        flex-direction: column;
+        gap: 3px;
+        max-height: 60vh;
+        overflow-y: auto;
+        padding: 5px;
+        justify-content: flex-start;
         display: flex !important;
         visibility: visible !important;
     }
