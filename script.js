@@ -148,6 +148,8 @@ class PuzzleGame {
         const emptySlot = allSlots.find(slot => !slot.querySelector('.puzzle-piece'));
         if (emptySlot) {
             emptySlot.appendChild(piece);
+            // 슬롯으로 이동한 조각의 상태 초기화
+            piece.classList.remove('correct', 'incorrect');
         }
     }
 
@@ -407,6 +409,12 @@ class PuzzleGame {
     }
 
     placePieceInCell(piece, cell) {
+        // 기존 조각이 있으면 제거하고 상태 정리
+        const existingPiece = cell.querySelector('.puzzle-piece');
+        if (existingPiece) {
+            existingPiece.remove();
+        }
+        
         cell.appendChild(piece);
         cell.classList.add('occupied');
         this.updatePieceStatus(piece, cell);
