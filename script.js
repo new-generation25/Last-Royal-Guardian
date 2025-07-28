@@ -149,10 +149,14 @@ class PuzzleGame {
     setupDropZone(cell) {
         cell.addEventListener('dragover', (e) => {
             e.preventDefault();
-            cell.classList.add('drop-zone');
+            e.dataTransfer.dropEffect = 'move';
+            if (!cell.hasChildNodes()) {
+                cell.classList.add('drop-zone');
+            }
         });
 
-        cell.addEventListener('dragleave', () => {
+        cell.addEventListener('dragleave', (e) => {
+            e.preventDefault();
             cell.classList.remove('drop-zone');
         });
 
@@ -161,10 +165,14 @@ class PuzzleGame {
             cell.classList.remove('drop-zone');
             
             const pieceId = e.dataTransfer.getData('text/plain');
+            console.log('드롭된 조각 ID:', pieceId);
             const piece = document.getElementById(pieceId);
             
             if (piece && !cell.hasChildNodes()) {
+                console.log('조각 배치:', pieceId, '-> 셀', cell.dataset.position);
                 this.placePiece(piece, cell);
+            } else {
+                console.log('조각 배치 실패:', piece ? '셀에 이미 조각 있음' : '조각을 찾을 수 없음');
             }
         });
     }
@@ -330,18 +338,21 @@ class PuzzleGame {
 
     setupDragAndDrop(piece) {
         piece.addEventListener('dragstart', (e) => {
+            console.log('드래그 시작:', piece.id);
             e.dataTransfer.setData('text/plain', piece.id);
+            e.dataTransfer.effectAllowed = 'move';
             piece.classList.add('dragging');
         });
 
-        piece.addEventListener('dragend', () => {
+        piece.addEventListener('dragend', (e) => {
+            console.log('드래그 종료:', piece.id);
             piece.classList.remove('dragging');
         });
     }
 
     setupTouchEvents(piece) {
-        // 모바일에서만 터치 이벤트 활성화
-        if (!('ontouchstart' in window)) return;
+        // 모바일에서만 터치 이벤트 활성화 (PC에서는 완전히 비활성화)
+        if (!('ontouchstart' in window) || window.innerWidth > 768) return;
         
         let startX, startY, currentX, currentY;
         let isDragging = false;
@@ -542,12 +553,14 @@ class PuzzleGame {
         // 슬롯에서도 드래그 앤 드롭 가능하도록
         slot.addEventListener('dragover', (e) => {
             e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
             if (!slot.hasChildNodes()) {
                 slot.classList.add('drag-over');
             }
         });
 
-        slot.addEventListener('dragleave', () => {
+        slot.addEventListener('dragleave', (e) => {
+            e.preventDefault();
             slot.classList.remove('drag-over');
         });
 
@@ -557,9 +570,11 @@ class PuzzleGame {
             
             if (!slot.hasChildNodes()) {
                 const pieceId = e.dataTransfer.getData('text/plain');
+                console.log('슬롯에 드롭된 조각 ID:', pieceId);
                 const piece = document.getElementById(pieceId);
                 if (piece) {
                     slot.appendChild(piece);
+                    console.log('슬롯에 조각 배치 완료');
                 }
             }
         });
