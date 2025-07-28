@@ -7,26 +7,21 @@ class PuzzleGame {
         this.currentImage = null;
         this.puzzlePieces = [];
         this.gridCells = [];
-        this.originalImageData = null;
-        
-        // Figma 디자인에 맞는 고정 크기 설정
-        this.pieceSize = 60; // 퍼즐 조각 크기 (60x60px)
-        this.gridWidth = 180; // 퍼즐 그리드 너비
-        this.gridHeight = 300; // 퍼즐 그리드 높이
         
         this.initializeElements();
         this.setupEventListeners();
         this.createPuzzleGrid();
-        
-        // 기본 이미지 자동 로드
-        this.loadDefaultImage();
+        this.showIntro();
     }
 
     initializeElements() {
+        // UI 요소들
+        this.gameIntro = document.getElementById('gameIntro');
         this.imageInput = document.getElementById('imageInput');
         this.uploadBtn = document.getElementById('uploadBtn');
         this.hintBtn = document.getElementById('hintBtn');
         this.shuffleBtn = document.getElementById('shuffleBtn');
+        this.showImageBtn = document.getElementById('showImageBtn');
         this.hintCount = document.getElementById('hintCount');
         this.puzzleGrid = document.getElementById('puzzleGrid');
         this.originalOverlay = document.getElementById('originalOverlay');
@@ -37,81 +32,46 @@ class PuzzleGame {
         this.leftSlots = document.getElementById('leftSlots');
         this.rightSlots = document.getElementById('rightSlots');
         this.bottomSlots = document.getElementById('bottomSlots');
-        
-        // 인트로 요소들
-        this.gameIntro = document.getElementById('gameIntro');
-        this.introImage = document.getElementById('introImage');
-        
-        // 오디오 생성
-        this.createAudioElements();
-    }
-
-    createAudioElements() {
-        // 퍼즐 맞을 때 효과음 (딸깍)
-        this.clickSound = new Audio();
-        this.clickSound.src = 'data:audio/wav;base64,UklGRnABAABXQVZFZm10IBAAAAABAAEAIlYAAIhYAQACABAAZGF0YUwBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
-        
-        // 완성 효과음 (쓔욱)
-        this.completeSound = new Audio();
-        this.completeSound.src = 'data:audio/wav;base64,UklGRiQBAABXQVZFZm10IBAAAAABAAEAIlYAAIhYAQACABAAZGF0YQABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
     }
 
     setupEventListeners() {
+        // 인트로 화면 클릭으로 게임 시작
+        this.gameIntro.addEventListener('click', () => {
+            this.hideIntro();
+            this.loadDefaultImage();
+        });
+
+        // 파일 업로드
         this.uploadBtn.addEventListener('click', () => {
             this.imageInput.click();
         });
 
         this.imageInput.addEventListener('change', (e) => {
-            this.handleImageUpload(e);
+            if (e.target.files && e.target.files[0]) {
+                this.loadImageFromFile(e.target.files[0]);
+            }
         });
 
-        this.hintBtn.addEventListener('click', () => {
-            this.showHint();
+        // 게임 버튼들
+        this.hintBtn.addEventListener('click', () => this.showHint());
+        this.shuffleBtn.addEventListener('click', () => this.shufflePieces());
+        
+        // 원본 이미지 보기
+        this.showImageBtn.addEventListener('click', () => {
+            this.originalOverlay.classList.add('show');
         });
 
-        this.shuffleBtn.addEventListener('click', () => {
-            this.shufflePieces();
+        this.originalOverlay.addEventListener('click', () => {
+            this.originalOverlay.classList.remove('show');
         });
     }
 
-    loadDefaultImage() {
-        console.log('기본 이미지 로드 시작...');
-        
-        this.createEmptyPuzzleGrid();
-        
-        const defaultImage = new Image();
-        
-        defaultImage.onload = () => {
-            console.log('기본 이미지 로드 성공:', defaultImage.width, 'x', defaultImage.height);
-            this.currentImage = './gima2.png';
-            this.originalImageData = defaultImage;
-            this.originalImage.src = this.currentImage;
-            this.introImage.src = this.currentImage;
-            
-            this.createPuzzlePieces();
-            this.showGameIntro();
-        };
-        
-        defaultImage.onerror = (error) => {
-            console.error('기본 이미지 로드 실패:', error);
-            this.currentImage = null;
-            this.createPuzzlePieces();
-            this.showGameIntro();
-        };
-        
-        defaultImage.src = './gima2.png';
+    showIntro() {
+        this.gameIntro.style.display = 'flex';
     }
 
-    createEmptyPuzzleGrid() {
-        // 빈 퍼즐 그리드 생성 (이미지 없이)
-        console.log('빈 퍼즐 그리드 생성');
-        this.puzzleGrid.style.border = '2px dashed #ccc';
-        this.puzzleGrid.style.backgroundColor = '#f9f9f9';
-        
-        // 격자 셀에 안내 텍스트 추가
-        this.gridCells.forEach((cell, index) => {
-            cell.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #999; font-size: 10px;">${index + 1}</div>`;
-        });
+    hideIntro() {
+        this.gameIntro.style.display = 'none';
     }
 
     createPuzzleGrid() {
@@ -124,7 +84,7 @@ class PuzzleGame {
                 cell.className = 'grid-cell';
                 cell.dataset.row = row;
                 cell.dataset.col = col;
-                cell.dataset.position = row * this.cols + col;
+                cell.dataset.correctId = row * this.cols + col;
                 
                 this.setupDropZone(cell);
                 this.puzzleGrid.appendChild(cell);
@@ -136,238 +96,112 @@ class PuzzleGame {
     setupDropZone(cell) {
         cell.addEventListener('dragover', (e) => {
             e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            if (!cell.querySelector('.puzzle-piece')) {
-                cell.classList.add('drop-zone');
-            }
+            cell.classList.add('drag-over');
         });
 
-        cell.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            cell.classList.remove('drop-zone');
+        cell.addEventListener('dragleave', () => {
+            cell.classList.remove('drag-over');
         });
 
         cell.addEventListener('drop', (e) => {
             e.preventDefault();
-            cell.classList.remove('drop-zone');
+            cell.classList.remove('drag-over');
             
             const pieceId = e.dataTransfer.getData('text/plain');
-            console.log('드롭된 조각 ID:', pieceId);
             const piece = document.getElementById(pieceId);
             
             if (piece && !cell.querySelector('.puzzle-piece')) {
-                console.log('조각 배치:', pieceId, '-> 셀', cell.dataset.position);
-                this.placePiece(piece, cell);
-            } else {
-                console.log('조각 배치 실패:', piece ? '셀에 이미 조각 있음' : '조각을 찾을 수 없음');
+                this.placePieceInCell(piece, cell);
+                this.checkCompletion();
             }
         });
     }
 
-    handleImageUpload(e) {
-        const file = e.target.files[0];
-        if (!file) return;
+    loadDefaultImage() {
+        this.currentImage = 'gima2.png';
+        this.originalImage.src = this.currentImage;
+        this.createPuzzlePieces();
+    }
 
+    loadImageFromFile(file) {
         const reader = new FileReader();
-        reader.onload = (event) => {
-            this.currentImage = event.target.result;
+        reader.onload = (e) => {
+            this.currentImage = e.target.result;
             this.originalImage.src = this.currentImage;
-            this.introImage.src = this.currentImage;
-            this.showGameIntro();
+            this.createPuzzlePieces();
         };
         reader.readAsDataURL(file);
     }
 
-    showGameIntro() {
-        // 이미지가 있으면 인트로 표시, 없으면 바로 게임 시작
-        if (this.currentImage) {
-            this.gameIntro.classList.add('show');
-            
-            setTimeout(() => {
-                this.gameIntro.classList.remove('show');
-                this.createPuzzlePieces();
-                this.resetHints();
-            }, 3000);
-        } else {
-            // 이미지가 없으면 바로 게임 시작
-            console.log('이미지 없이 게임 시작');
-            this.createPuzzlePieces();
-            this.resetHints();
-        }
-    }
-
     createPuzzlePieces() {
-        console.log('퍼즐 조각 생성 시작...');
-        this.clearAllSlots();
+        // 기존 퍼즐 조각들 제거
+        this.puzzlePieces.forEach(piece => piece.remove());
         this.puzzlePieces = [];
 
-        if (!this.currentImage) {
-            console.log('이미지가 없어서 색상 퍼즐 조각을 생성합니다.');
-            this.createColorPuzzlePieces();
-            return;
+        // 슬롯 영역들 초기화
+        this.clearSlots();
+
+        // 새 퍼즐 조각들 생성
+        for (let i = 0; i < this.totalPieces; i++) {
+            const piece = this.createPuzzlePiece(i);
+            this.puzzlePieces.push(piece);
         }
 
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        
-        img.onload = () => {
-            console.log('이미지 로드 완료, 퍼즐 조각 생성 중...', img.width, 'x', img.height);
-            
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
-            
-            this.originalImageData = canvas;
-            
-            // 퍼즐 조각 생성
-            for (let row = 0; row < this.rows; row++) {
-                for (let col = 0; col < this.cols; col++) {
-                    const piece = this.createPuzzlePiece(row, col, img);
-                    this.puzzlePieces.push(piece);
-                }
-            }
-            
-            console.log('퍼즐 조각 생성 완료:', this.puzzlePieces.length, '개');
-            this.distributePieces();
-        };
-        
-        img.onerror = (error) => {
-            console.error('퍼즐 조각 생성 중 이미지 로드 실패:', error);
-            this.createColorPuzzlePieces();
-        };
-        
-        img.src = this.currentImage;
-    }
-
-    createColorPuzzlePieces() {
-        console.log('색상 퍼즐 조각 생성 중...');
-        
-        const colors = [
-            '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
-            '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
-            '#F8C471', '#82E0AA', '#F1948A', '#85C1E9', '#D7BDE2'
-        ];
-        
-        for (let row = 0; row < this.rows; row++) {
-            for (let col = 0; col < this.cols; col++) {
-                const piece = document.createElement('div');
-                piece.className = 'puzzle-piece';
-                piece.id = `piece-${row}-${col}`;
-                piece.dataset.row = row;
-                piece.dataset.col = col;
-                piece.dataset.position = row * this.cols + col;
-                piece.draggable = true;
-                
-                // 고정 크기 사용 (50x50px)
-                piece.style.width = `${this.pieceSize}px`;
-                piece.style.height = `${this.pieceSize}px`;
-                
-                const index = row * this.cols + col;
-                piece.style.backgroundColor = colors[index];
-                piece.style.border = '1px solid #333';
-                piece.style.display = 'flex';
-                piece.style.alignItems = 'center';
-                piece.style.justifyContent = 'center';
-                piece.style.color = '#fff';
-                piece.style.fontWeight = 'bold';
-                piece.style.fontSize = '10px';
-                piece.style.boxSizing = 'border-box';
-                piece.style.borderRadius = '8px';
-                piece.textContent = `${index + 1}`;
-                
-                this.setupDragAndDrop(piece);
-                this.setupTouchEvents(piece);
-                this.puzzlePieces.push(piece);
-            }
-        }
-        
-        console.log('색상 퍼즐 조각 생성 완료:', this.puzzlePieces.length, '개');
+        // 조각들을 슬롯에 배치
         this.distributePieces();
     }
 
-    createPuzzlePiece(row, col, img) {
+    createPuzzlePiece(id) {
         const piece = document.createElement('div');
         piece.className = 'puzzle-piece';
-        piece.id = `piece-${row}-${col}`;
-        piece.dataset.row = row;
-        piece.dataset.col = col;
-        piece.dataset.position = row * this.cols + col;
-        piece.draggable = true;
-
-        // 고정 크기 사용 (50x50px)
-        piece.style.width = `${this.pieceSize}px`;
-        piece.style.height = `${this.pieceSize}px`;
-
-        // 이미지를 퍼즐 그리드 크기에 맞게 정확히 스케일링
-        const imageAspect = img.width / img.height;
-        const puzzleAspect = this.gridWidth / this.gridHeight;
-        let scaledWidth, scaledHeight;
+        piece.id = `piece-${id}`;
+        piece.dataset.correctId = id;
         
-        // 이미지가 퍼즐판을 완전히 채우도록 계산
-        if (imageAspect > puzzleAspect) {
-            // 이미지가 더 가로로 길 때 - 높이를 맞추고 너비는 잘림
-            scaledHeight = this.gridHeight;
-            scaledWidth = scaledHeight * imageAspect;
-        } else {
-            // 이미지가 더 세로로 길 때 - 너비를 맞추고 높이는 잘림
-            scaledWidth = this.gridWidth;
-            scaledHeight = scaledWidth / imageAspect;
-        }
+        const row = Math.floor(id / this.cols);
+        const col = id % this.cols;
         
-        // 중앙 정렬을 위한 오프셋 계산
-        const offsetX = (scaledWidth - this.gridWidth) / 2;
-        const offsetY = (scaledHeight - this.gridHeight) / 2;
-
-        // 배경 위치 계산 (정확한 조각 분할 + 중앙 정렬)
-        const backgroundX = -col * (scaledWidth / this.cols) + offsetX;
-        const backgroundY = -row * (scaledHeight / this.rows) + offsetY;
+        // 배경 이미지 위치 계산 (70px 단위)
+        const bgX = -(col * 70);
+        const bgY = -(row * 70);
         
-        // 조각 스타일 설정
         piece.style.backgroundImage = `url(${this.currentImage})`;
-        piece.style.backgroundSize = `${scaledWidth}px ${scaledHeight}px`;
-        piece.style.backgroundPosition = `${backgroundX}px ${backgroundY}px`;
-        piece.style.backgroundRepeat = 'no-repeat';
-        piece.style.border = '1px solid #333';
-        piece.style.boxSizing = 'border-box';
-        piece.style.borderRadius = '8px';
+        piece.style.backgroundPosition = `${bgX}px ${bgY}px`;
+        piece.style.backgroundSize = '210px 350px';
         
-        this.setupDragAndDrop(piece);
-        this.setupTouchEvents(piece);
+        this.setupPieceDragEvents(piece);
+        this.setupPieceTouchEvents(piece);
+        
         return piece;
     }
 
-    setupDragAndDrop(piece) {
+    setupPieceDragEvents(piece) {
+        piece.draggable = true;
+        
         piece.addEventListener('dragstart', (e) => {
-            console.log('드래그 시작:', piece.id);
             e.dataTransfer.setData('text/plain', piece.id);
-            e.dataTransfer.effectAllowed = 'move';
             piece.classList.add('dragging');
         });
 
-        piece.addEventListener('dragend', (e) => {
-            console.log('드래그 종료:', piece.id);
+        piece.addEventListener('dragend', () => {
             piece.classList.remove('dragging');
         });
     }
 
-    setupTouchEvents(piece) {
-        // 모바일에서만 터치 이벤트 활성화 (PC에서는 완전히 비활성화)
-        if (!('ontouchstart' in window) || window.innerWidth > 768) return;
+    setupPieceTouchEvents(piece) {
+        // 모바일 터치 이벤트만 활성화
+        if (!('ontouchstart' in window)) return;
         
-        let startX, startY, currentX, currentY, initialLeft, initialTop;
+        let startX, startY, currentX, currentY;
+        let initialLeft, initialTop;
         let isDragging = false;
         let originalParent, originalNextSibling;
 
         piece.addEventListener('touchstart', (e) => {
             e.preventDefault();
+            
             const touch = e.touches[0];
             startX = touch.clientX;
             startY = touch.clientY;
-            currentX = startX;
-            currentY = startY;
             
             // 원래 위치 저장
             originalParent = piece.parentElement;
@@ -377,13 +211,13 @@ class PuzzleGame {
             isDragging = true;
             piece.classList.add('dragging');
             
-            // 퍼즐 조각을 body에 추가하여 자유롭게 이동
+            // body에 추가하여 자유 이동
             document.body.appendChild(piece);
             piece.style.position = 'fixed';
             piece.style.zIndex = '1000';
             piece.style.pointerEvents = 'none';
             
-            // 초기 위치 설정 및 저장
+            // 초기 위치 설정
             const rect = piece.getBoundingClientRect();
             initialLeft = rect.left;
             initialTop = rect.top;
@@ -399,16 +233,16 @@ class PuzzleGame {
             currentX = touch.clientX;
             currentY = touch.clientY;
             
-            // 터치 시작점으로부터 실제 이동량 계산
+            // 터치 시작점에서의 이동량 계산
             const deltaX = currentX - startX;
             const deltaY = currentY - startY;
             
-            // 초기 위치에서의 이동량으로 새 위치 계산
+            // 새 위치 설정
             piece.style.left = `${initialLeft + deltaX}px`;
             piece.style.top = `${initialTop + deltaY}px`;
             
             // 드롭 영역 하이라이트
-            this.highlightDropZones(currentX, currentY);
+            this.highlightDropZone(currentX, currentY);
         });
 
         piece.addEventListener('touchend', (e) => {
@@ -418,20 +252,27 @@ class PuzzleGame {
             isDragging = false;
             piece.classList.remove('dragging');
             
-            // 드롭 영역 하이라이트 제거
-            this.removeDropZoneHighlights();
-            
-            // 드롭 가능한 영역 찾기
+            // 드롭 영역 찾기
             const dropZone = this.findDropZone(currentX, currentY);
             
-            if (dropZone) {
-                // 드롭 영역에 배치
-                this.placePieceInZone(piece, dropZone);
-                // 완성 체크 추가
-                setTimeout(() => this.checkCompletion(), 100);
+            if (dropZone && dropZone.classList.contains('grid-cell') && 
+                !dropZone.querySelector('.puzzle-piece')) {
+                // 그리드 셀에 배치
+                this.placePieceInCell(piece, dropZone);
+                this.checkCompletion();
+            } else if (dropZone && dropZone.classList.contains('puzzle-slot') && 
+                      !dropZone.querySelector('.puzzle-piece')) {
+                // 슬롯에 배치
+                dropZone.appendChild(piece);
             } else {
                 // 원래 위치로 복원
-                this.restorePiece(piece, originalParent, originalNextSibling);
+                if (originalParent) {
+                    if (originalNextSibling) {
+                        originalParent.insertBefore(piece, originalNextSibling);
+                    } else {
+                        originalParent.appendChild(piece);
+                    }
+                }
             }
             
             // 스타일 초기화
@@ -440,16 +281,18 @@ class PuzzleGame {
             piece.style.left = '';
             piece.style.top = '';
             piece.style.pointerEvents = '';
+            
+            // 하이라이트 제거
+            this.removeDropZoneHighlights();
         });
     }
 
-    highlightDropZones(x, y) {
-        // 모든 드롭 영역에서 하이라이트 제거
+    highlightDropZone(x, y) {
         this.removeDropZoneHighlights();
         
-        // 마우스 위치의 드롭 영역 하이라이트
         const element = document.elementFromPoint(x, y);
-        if (element && (element.classList.contains('grid-cell') || element.classList.contains('puzzle-slot'))) {
+        if (element && (element.classList.contains('grid-cell') || 
+                       element.classList.contains('puzzle-slot'))) {
             element.classList.add('drag-over');
         }
     }
@@ -462,104 +305,90 @@ class PuzzleGame {
 
     findDropZone(x, y) {
         const element = document.elementFromPoint(x, y);
-        if (element && element.classList.contains('grid-cell') && !element.querySelector('.puzzle-piece')) {
-            return element;
-        }
-        if (element && element.classList.contains('puzzle-slot') && !element.querySelector('.puzzle-piece')) {
+        if (element && (element.classList.contains('grid-cell') || 
+                       element.classList.contains('puzzle-slot'))) {
             return element;
         }
         return null;
     }
 
-    placePieceInZone(piece, zone) {
-        if (zone.classList.contains('grid-cell')) {
-            this.placePiece(piece, zone);
-        } else if (zone.classList.contains('puzzle-slot')) {
-            zone.appendChild(piece);
-            // 슬롯에서 그리드로 이동한 경우 완성 체크
-            if (piece.parentElement.classList.contains('grid-cell')) {
-                this.checkCompletion();
-            }
+    placePieceInCell(piece, cell) {
+        cell.appendChild(piece);
+        cell.classList.add('occupied');
+        
+        // 올바른 위치인지 확인
+        const pieceId = parseInt(piece.dataset.correctId);
+        const cellId = parseInt(cell.dataset.correctId);
+        
+        if (pieceId === cellId) {
+            // 올바른 위치
+            piece.style.border = '4px inset #28a745';
+            piece.style.boxShadow = 'inset 0 2px 8px rgba(40, 167, 69, 0.3), 0 2px 8px rgba(0, 0, 0, 0.1)';
         }
     }
 
-    restorePiece(piece, parent, nextSibling) {
-        if (parent) {
-            if (nextSibling) {
-                parent.insertBefore(piece, nextSibling);
-            } else {
-                parent.appendChild(piece);
-            }
-        }
+    clearSlots() {
+        [this.topSlots, this.leftSlots, this.rightSlots, this.bottomSlots].forEach(slot => {
+            slot.innerHTML = '';
+        });
     }
 
     distributePieces() {
-        console.log('퍼즐 조각 분배 시작...');
+        // 각 영역별 슬롯 개수
+        const topCount = 3;
+        const sideCount = 5;
+        const bottomCount = 2;
         
-        // 퍼즐 조각들을 섞기
+        // 조각들을 섞기
         const shuffledPieces = [...this.puzzlePieces].sort(() => Math.random() - 0.5);
         
-        // 기존 슬롯들 모두 제거
-        this.clearAllSlots();
+        let pieceIndex = 0;
         
-        // 상단 영역에 3개
-        const topPieces = shuffledPieces.slice(0, 3);
-        console.log('상단 영역에 배치:', topPieces.length, '개');
-        topPieces.forEach(piece => {
-            const slot = this.createPuzzleSlot();
-            slot.appendChild(piece);
+        // 상단 영역에 배치
+        for (let i = 0; i < topCount && pieceIndex < shuffledPieces.length; i++) {
+            const slot = this.createSlot();
+            slot.appendChild(shuffledPieces[pieceIndex++]);
             this.topSlots.appendChild(slot);
-        });
-
-        // 좌측 영역에 5개
-        const leftPieces = shuffledPieces.slice(3, 8);
-        console.log('좌측 영역에 배치:', leftPieces.length, '개');
-        leftPieces.forEach(piece => {
-            const slot = this.createPuzzleSlot();
-            slot.appendChild(piece);
-            this.leftSlots.appendChild(slot);
-        });
-
-        // 우측 영역에 5개
-        const rightPieces = shuffledPieces.slice(8, 13);
-        console.log('우측 영역에 배치:', rightPieces.length, '개');
-        rightPieces.forEach(piece => {
-            const slot = this.createPuzzleSlot();
-            slot.appendChild(piece);
-            this.rightSlots.appendChild(slot);
-        });
-
-        // 하단 영역에 2개
-        const bottomPieces = shuffledPieces.slice(13);
-        console.log('하단 영역에 배치:', bottomPieces.length, '개');
-        bottomPieces.forEach(piece => {
-            const slot = this.createPuzzleSlot();
-            slot.appendChild(piece);
-            this.bottomSlots.appendChild(slot);
-        });
+        }
         
-        console.log('퍼즐 조각 분배 완료');
-        console.log('상단 슬롯:', this.topSlots.children.length, '개');
-        console.log('좌측 슬롯:', this.leftSlots.children.length, '개');
-        console.log('우측 슬롯:', this.rightSlots.children.length, '개');
-        console.log('하단 슬롯:', this.bottomSlots.children.length, '개');
+        // 좌측 영역에 배치
+        for (let i = 0; i < sideCount && pieceIndex < shuffledPieces.length; i++) {
+            const slot = this.createSlot();
+            slot.appendChild(shuffledPieces[pieceIndex++]);
+            this.leftSlots.appendChild(slot);
+        }
+        
+        // 우측 영역에 배치
+        for (let i = 0; i < sideCount && pieceIndex < shuffledPieces.length; i++) {
+            const slot = this.createSlot();
+            slot.appendChild(shuffledPieces[pieceIndex++]);
+            this.rightSlots.appendChild(slot);
+        }
+        
+        // 하단 영역에 배치
+        for (let i = 0; i < bottomCount && pieceIndex < shuffledPieces.length; i++) {
+            const slot = this.createSlot();
+            slot.appendChild(shuffledPieces[pieceIndex++]);
+            this.bottomSlots.appendChild(slot);
+        }
     }
 
-    createPuzzleSlot() {
+    createSlot() {
         const slot = document.createElement('div');
         slot.className = 'puzzle-slot';
-        
-        // 슬롯에서도 드래그 앤 드롭 가능하도록
+        this.setupSlotDropZone(slot);
+        return slot;
+    }
+
+    setupSlotDropZone(slot) {
         slot.addEventListener('dragover', (e) => {
             e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            if (!slot.hasChildNodes()) {
+            if (!slot.querySelector('.puzzle-piece')) {
                 slot.classList.add('drag-over');
             }
         });
 
-        slot.addEventListener('dragleave', (e) => {
-            e.preventDefault();
+        slot.addEventListener('dragleave', () => {
             slot.classList.remove('drag-over');
         });
 
@@ -567,166 +396,118 @@ class PuzzleGame {
             e.preventDefault();
             slot.classList.remove('drag-over');
             
-            if (!slot.hasChildNodes()) {
+            if (!slot.querySelector('.puzzle-piece')) {
                 const pieceId = e.dataTransfer.getData('text/plain');
-                console.log('슬롯에 드롭된 조각 ID:', pieceId);
                 const piece = document.getElementById(pieceId);
                 if (piece) {
                     slot.appendChild(piece);
-                    console.log('슬롯에 조각 배치 완료');
                 }
             }
         });
-
-        return slot;
-    }
-
-    placePiece(piece, cell) {
-        const piecePosition = parseInt(piece.dataset.position);
-        const cellPosition = parseInt(cell.dataset.position);
-        
-        cell.appendChild(piece);
-        cell.classList.add('occupied');
-        
-        // 올바른 위치에 놓였는지 확인
-        if (piecePosition === cellPosition) {
-            piece.style.border = '4px solid #28a745';
-            piece.style.borderInset = '4px';
-            
-            // 딸깍 효과음 재생
-            try {
-                this.clickSound.currentTime = 0;
-                this.clickSound.play().catch(e => console.log('오디오 재생 실패:', e));
-            } catch (e) {
-                console.log('오디오 재생 실패:', e);
-            }
-            
-            this.checkCompletion();
-        } else {
-            piece.style.border = '1px solid #fff';
-        }
-    }
-
-    showHint() {
-        if (this.hintsLeft <= 0 || !this.currentImage) return;
-
-        this.hintsLeft--;
-        this.hintCount.textContent = this.hintsLeft;
-        
-        // 아직 맞춰지지 않은 퍼즐 조각들 찾기
-        const wrongPieces = [];
-        
-        // 모든 퍼즐 조각을 검사하여 잘못된 위치에 있는 것들 찾기
-        this.puzzlePieces.forEach(piece => {
-            const piecePosition = parseInt(piece.dataset.position);
-            const currentParent = piece.parentElement;
-            
-            // 격자에 있는 조각 중 잘못된 위치에 있는 것
-            if (currentParent && currentParent.classList.contains('grid-cell')) {
-                const cellPosition = parseInt(currentParent.dataset.position);
-                if (piecePosition !== cellPosition) {
-                    wrongPieces.push(piece);
-                }
-            }
-            // 격자 밖에 있는 조각들
-            else if (currentParent && currentParent.classList.contains('puzzle-slot')) {
-                wrongPieces.push(piece);
-            }
-        });
-        
-        if (wrongPieces.length > 0) {
-            // 랜덤으로 하나 선택
-            const randomPiece = wrongPieces[Math.floor(Math.random() * wrongPieces.length)];
-            const correctPosition = parseInt(randomPiece.dataset.position);
-            const correctCell = this.gridCells[correctPosition];
-            
-            // 현재 위치에서 제거
-            if (randomPiece.parentElement) {
-                randomPiece.parentElement.classList.remove('occupied');
-            }
-            
-            // 정답 위치로 이동
-            this.placePiece(randomPiece, correctCell);
-            
-            // 이동 효과
-            randomPiece.style.animation = 'slideIn 0.5s ease';
-        }
-
-        if (this.hintsLeft === 0) {
-            this.hintBtn.disabled = true;
-            this.hintBtn.textContent = '힌트 소진됨';
-        }
     }
 
     shufflePieces() {
-        // 그리드에서 모든 조각 제거
-        this.gridCells.forEach(cell => {
-            while (cell.firstChild) {
-                cell.removeChild(cell.firstChild);
-            }
-            cell.classList.remove('occupied');
-        });
-
-        // 모든 슬롯 비우기
-        this.clearAllSlots();
+        // 모든 조각들을 수집
+        const allPieces = this.puzzlePieces.filter(piece => 
+            !piece.parentElement.classList.contains('grid-cell')
+        );
         
-        // 다시 분배
-        if (this.puzzlePieces.length > 0) {
-            this.distributePieces();
+        // 조각들을 슬롯에서 제거
+        allPieces.forEach(piece => {
+            if (piece.parentElement.classList.contains('puzzle-slot')) {
+                piece.remove();
+            }
+        });
+        
+        // 다시 배치
+        this.distributePieces();
+    }
+
+    showHint() {
+        if (this.hintsLeft <= 0) return;
+        
+        // 잘못 배치된 조각 찾기
+        const wrongPieces = [];
+        this.gridCells.forEach(cell => {
+            const piece = cell.querySelector('.puzzle-piece');
+            if (piece) {
+                const pieceId = parseInt(piece.dataset.correctId);
+                const cellId = parseInt(cell.dataset.correctId);
+                if (pieceId !== cellId) {
+                    wrongPieces.push(piece);
+                }
+            }
+        });
+        
+        // 빈 올바른 위치 찾기
+        const emptyCorrectCells = this.gridCells.filter(cell => 
+            !cell.querySelector('.puzzle-piece')
+        );
+        
+        if (wrongPieces.length > 0) {
+            // 잘못된 조각 하이라이트
+            const randomWrong = wrongPieces[Math.floor(Math.random() * wrongPieces.length)];
+            this.highlightPiece(randomWrong);
+        } else if (emptyCorrectCells.length > 0) {
+            // 빈 올바른 위치 하이라이트
+            const randomEmpty = emptyCorrectCells[Math.floor(Math.random() * emptyCorrectCells.length)];
+            this.highlightCell(randomEmpty);
+        }
+        
+        this.hintsLeft--;
+        this.hintCount.textContent = this.hintsLeft;
+        
+        if (this.hintsLeft === 0) {
+            this.hintBtn.disabled = true;
         }
     }
 
-    clearAllSlots() {
-        [this.topSlots, this.leftSlots, this.rightSlots, this.bottomSlots].forEach(container => {
-            container.innerHTML = '';
-        });
+    highlightPiece(piece) {
+        piece.classList.add('hint-highlight');
+        setTimeout(() => {
+            piece.classList.remove('hint-highlight');
+        }, 2000);
     }
 
-    resetHints() {
-        this.hintsLeft = 5;
-        this.hintCount.textContent = this.hintsLeft;
-        this.hintBtn.disabled = false;
-        this.hintBtn.innerHTML = '힌트보기 (<span id="hintCount">5</span>)';
-        this.hintCount = document.getElementById('hintCount');
+    highlightCell(cell) {
+        cell.classList.add('hint-highlight');
+        setTimeout(() => {
+            cell.classList.remove('hint-highlight');
+        }, 2000);
     }
 
     checkCompletion() {
-        console.log('완성 체크 시작...');
-        const correctPieces = this.gridCells.filter(cell => {
-            const piece = cell.firstChild;
-            if (!piece) return false;
-            
-            const piecePosition = parseInt(piece.dataset.position);
-            const cellPosition = parseInt(cell.dataset.position);
-            const isCorrect = piecePosition === cellPosition;
-            console.log(`셀 ${cellPosition}: 조각 ${piecePosition} - ${isCorrect ? '정답' : '틀림'}`);
-            return isCorrect;
-        });
-
-        console.log(`정답 조각: ${correctPieces.length}/${this.totalPieces}`);
-
-        if (correctPieces.length === this.totalPieces) {
-            console.log('퍼즐 완성!');
-            // 완성 효과
-            this.puzzleGrid.classList.add('puzzle-complete');
-            
-            // 완성 효과음 재생
-            try {
-                this.completeSound.currentTime = 0;
-                this.completeSound.play().catch(e => console.log('완성 효과음 재생 실패:', e));
-            } catch (e) {
-                console.log('완성 효과음 재생 실패:', e);
+        let correctPieces = 0;
+        
+        this.gridCells.forEach(cell => {
+            const piece = cell.querySelector('.puzzle-piece');
+            if (piece) {
+                const pieceId = parseInt(piece.dataset.correctId);
+                const cellId = parseInt(cell.dataset.correctId);
+                if (pieceId === cellId) {
+                    correctPieces++;
+                }
             }
-            
-            setTimeout(() => {
-                this.puzzleGrid.classList.remove('puzzle-complete');
-                alert('가야의 유물을 찾았습니다!\n가야 기마인물형토기 🏛️✨');
-            }, 2400); // 애니메이션 완료 후
+        });
+        
+        if (correctPieces === this.totalPieces) {
+            this.showCompletionEffect();
         }
+    }
+
+    showCompletionEffect() {
+        // 완성 애니메이션
+        this.puzzleGrid.classList.add('puzzle-complete');
+        
+        // 축하 메시지
+        setTimeout(() => {
+            alert('축하합니다! 가야 기마인물형 토기 퍼즐을 완성하셨습니다!');
+            this.puzzleGrid.classList.remove('puzzle-complete');
+        }, 2400);
     }
 }
 
-// 게임 초기화
+// 게임 시작
 document.addEventListener('DOMContentLoaded', () => {
     new PuzzleGame();
 });
