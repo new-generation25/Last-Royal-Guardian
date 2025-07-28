@@ -118,8 +118,15 @@ class PuzzleGame {
                 // 기존 조각이 있으면 교체
                 const existingPiece = cell.querySelector('.puzzle-piece');
                 if (existingPiece) {
-                    // 기존 조각을 원래 위치로 이동
-                    this.movePieceToSlot(existingPiece);
+                    // 기존 조각을 드래그한 조각의 원래 위치로 이동
+                    const originalParent = piece.parentElement;
+                    if (originalParent && originalParent.classList.contains('grid-cell')) {
+                        originalParent.appendChild(existingPiece);
+                        originalParent.classList.add('occupied');
+                        this.updatePieceStatus(existingPiece, originalParent);
+                    } else {
+                        this.movePieceToSlot(existingPiece);
+                    }
                 }
                 
                 this.placePieceInCell(piece, cell);
@@ -205,6 +212,26 @@ class PuzzleGame {
         
         piece.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('text/plain', piece.id);
+            
+            // 드래그 이미지 설정 (손가락 위치에 맞춤)
+            const rect = piece.getBoundingClientRect();
+            const offsetX = e.clientX - rect.left;
+            const offsetY = e.clientY - rect.top;
+            
+            // 드래그 이미지 생성
+            const dragImage = piece.cloneNode(true);
+            dragImage.style.position = 'absolute';
+            dragImage.style.top = '-1000px';
+            dragImage.style.left = '-1000px';
+            document.body.appendChild(dragImage);
+            
+            e.dataTransfer.setDragImage(dragImage, offsetX, offsetY);
+            
+            // 임시 요소 제거
+            setTimeout(() => {
+                document.body.removeChild(dragImage);
+            }, 0);
+            
             piece.classList.add('dragging');
         });
 
@@ -363,7 +390,10 @@ class PuzzleGame {
     placePieceInCell(piece, cell) {
         cell.appendChild(piece);
         cell.classList.add('occupied');
-        
+        this.updatePieceStatus(piece, cell);
+    }
+
+    updatePieceStatus(piece, cell) {
         // 올바른 위치인지 확인
         const pieceId = parseInt(piece.dataset.correctId);
         const cellId = parseInt(cell.dataset.correctId);
