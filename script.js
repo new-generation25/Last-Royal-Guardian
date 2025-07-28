@@ -278,8 +278,13 @@ class PuzzleGame {
             isDragging = false;
             piece.classList.remove('dragging');
             
+            // 마지막 터치 좌표 가져오기
+            const touch = e.changedTouches[0];
+            const finalX = touch ? touch.clientX : currentX;
+            const finalY = touch ? touch.clientY : currentY;
+            
             // 드롭 영역 찾기
-            const dropZone = this.findDropZone(currentX, currentY);
+            const dropZone = this.findDropZone(finalX, finalY);
             
             if (dropZone && dropZone.classList.contains('grid-cell')) {
                 // 기존 조각이 있으면 교체
@@ -321,6 +326,12 @@ class PuzzleGame {
     highlightDropZone(x, y) {
         this.removeDropZoneHighlights();
         
+        // 유효하지 않은 좌표 체크
+        if (typeof x !== 'number' || typeof y !== 'number' || 
+            isNaN(x) || isNaN(y) || !isFinite(x) || !isFinite(y)) {
+            return;
+        }
+        
         const element = document.elementFromPoint(x, y);
         if (element && (element.classList.contains('grid-cell') || 
                        element.classList.contains('puzzle-slot'))) {
@@ -335,6 +346,12 @@ class PuzzleGame {
     }
 
     findDropZone(x, y) {
+        // 유효하지 않은 좌표 체크
+        if (typeof x !== 'number' || typeof y !== 'number' || 
+            isNaN(x) || isNaN(y) || !isFinite(x) || !isFinite(y)) {
+            return null;
+        }
+        
         const element = document.elementFromPoint(x, y);
         if (element && (element.classList.contains('grid-cell') || 
                        element.classList.contains('puzzle-slot'))) {
