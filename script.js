@@ -226,23 +226,26 @@ class PuzzleGame {
             dragImage.style.width = '70px';
             dragImage.style.height = '70px';
             dragImage.style.opacity = '0.8';
+            dragImage.style.pointerEvents = 'none';
             document.body.appendChild(dragImage);
             
             // 드래그 이미지 위치 설정 (실제 마우스 위치에 맞춤)
             e.dataTransfer.setDragImage(dragImage, offsetX, offsetY);
             
-            // 임시 요소 제거
-            setTimeout(() => {
-                if (document.body.contains(dragImage)) {
-                    document.body.removeChild(dragImage);
-                }
-            }, 0);
+            // 임시 요소 제거 (dragend에서 제거)
+            piece.dragImage = dragImage;
             
             piece.classList.add('dragging');
         });
 
         piece.addEventListener('dragend', () => {
             piece.classList.remove('dragging');
+            
+            // 드래그 이미지 제거
+            if (piece.dragImage && document.body.contains(piece.dragImage)) {
+                document.body.removeChild(piece.dragImage);
+                piece.dragImage = null;
+            }
         });
     }
 
