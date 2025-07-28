@@ -10,7 +10,7 @@ body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     padding: 5px;
     margin: 0;
     overflow-x: hidden;
@@ -60,16 +60,17 @@ body {
 .game-container {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 20px;
-    padding: clamp(10px, 3vw, 20px);
+    padding: 10px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    width: min(95vw, 500px);
-    max-height: 95vh;
+    width: min(95vw, 400px);
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    overflow-y: auto;
+    overflow-y: visible;
     overflow-x: hidden;
+    margin: 5px 0;
 }
 
 .game-header {
@@ -79,29 +80,29 @@ body {
 
 .game-header h1 {
     color: #333;
-    margin-bottom: clamp(5px, 2vh, 10px);
-    font-size: clamp(1.5em, 5vw, 2.5em);
+    margin-bottom: 5px;
+    font-size: 1.5em;
 }
 
 .controls {
     display: flex;
     justify-content: center;
-    gap: clamp(5px, 2vw, 15px);
-    margin-bottom: clamp(5px, 2vh, 15px);
+    gap: 5px;
+    margin-bottom: 10px;
     flex-wrap: wrap;
 }
 
 .btn {
-    padding: clamp(8px, 2.5vh, 15px) clamp(12px, 3vw, 20px);
+    padding: 8px 12px;
     background: linear-gradient(45deg, #667eea, #764ba2);
     color: white;
     border: none;
-    border-radius: 20px;
+    border-radius: 15px;
     cursor: pointer;
-    font-size: clamp(12px, 3vw, 16px);
+    font-size: 12px;
     font-weight: bold;
     transition: all 0.3s ease;
-    min-width: clamp(80px, 20vw, 120px);
+    min-width: 70px;
     touch-action: manipulation;
 }
 
@@ -169,16 +170,16 @@ body {
 }
 
 .puzzle-grid {
-    width: min(70vw, 350px);
-    aspect-ratio: 3/5;
+    width: min(50vw, 180px);
+    height: min(83vw, 300px);
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(5, 1fr);
-    gap: 2px;
-    border: 3px solid #333;
-    border-radius: 10px;
+    gap: 1px;
+    border: 2px solid #333;
+    border-radius: 5px;
     background: #f5f5f5;
-    margin: 0 auto;
+    margin: 10px auto;
 }
 
 .grid-cell {
@@ -195,19 +196,17 @@ body {
 }
 
 .puzzle-slot {
-    width: clamp(35px, 10vw, 60px);
-    height: clamp(42px, 12vw, 72px);
-    border: 2px dashed #999;
-    border-radius: 5px;
+    width: 25px;
+    height: 30px;
+    border: 1px dashed #999;
+    border-radius: 3px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: #f0f0f0;
-    aspect-ratio: 3/5;
-    min-width: 35px;
-    min-height: 42px;
-    margin: 2px;
+    margin: 1px;
     box-sizing: border-box;
+    flex-shrink: 0;
 }
 
 .puzzle-slot.drag-over {
@@ -291,108 +290,34 @@ body {
 
 /* 반응형 디자인 */
 @media (max-width: 768px) {
-    body {
-        padding: 5px;
-    }
-    
     .game-container {
-        padding: clamp(10px, 4vw, 20px);
         width: 98vw;
-        max-height: 95vh;
-    }
-    
-    .game-header h1 {
-        font-size: clamp(1.8em, 6vw, 2.5em);
-        margin-bottom: clamp(10px, 3vh, 20px);
-    }
-    
-    .controls {
-        gap: clamp(8px, 3vw, 15px);
-        margin-bottom: clamp(10px, 3vh, 25px);
-    }
-    
-    .btn {
-        padding: clamp(10px, 3vh, 15px) clamp(15px, 4vw, 20px);
-        font-size: clamp(14px, 4vw, 18px);
-        min-width: clamp(90px, 25vw, 120px);
+        padding: 8px;
     }
     
     .middle-section {
         flex-direction: column;
-        gap: clamp(10px, 3vh, 20px);
+        gap: 8px;
     }
     
     .left-area .puzzle-slots,
     .right-area .puzzle-slots {
         flex-direction: row;
-        gap: clamp(5px, 2vw, 10px);
+        gap: 2px;
         max-width: 100%;
         overflow-x: auto;
-        padding: clamp(8px, 2vh, 15px) 0;
+        padding: 5px 0;
         justify-content: center;
         display: flex !important;
         visibility: visible !important;
     }
-    
-    .puzzle-grid {
-        width: min(80vw, 350px);
-        aspect-ratio: 3/5;
-    }
-    
-    .puzzle-slot {
-        width: clamp(45px, 12vw, 70px);
-        height: clamp(54px, 14.4vw, 84px);
-    }
 }
 
 @media (max-width: 480px) {
-    body {
-        padding: 2px;
-    }
-    
     .game-container {
         width: 100vw;
-        max-height: 95vh;
-        padding: clamp(8px, 3vw, 15px);
+        padding: 5px;
         border-radius: 0;
-    }
-    
-    .game-header h1 {
-        font-size: clamp(1.5em, 5vw, 2.2em);
-        margin-bottom: clamp(8px, 2vh, 15px);
-    }
-    
-    .controls {
-        gap: clamp(5px, 2vw, 10px);
-        margin-bottom: clamp(8px, 2vh, 20px);
-    }
-    
-    .btn {
-        padding: clamp(8px, 2.5vh, 12px) clamp(12px, 3vw, 16px);
-        font-size: clamp(12px, 3.5vw, 16px);
-        min-width: clamp(70px, 22vw, 100px);
-    }
-    
-    .middle-section {
-        flex-direction: column;
-        gap: clamp(8px, 2vh, 15px);
-    }
-    
-    .left-area .puzzle-slots,
-    .right-area .puzzle-slots {
-        flex-direction: row;
-        gap: clamp(3px, 1.5vw, 8px);
-        padding: clamp(5px, 1.5vh, 12px) 0;
-    }
-    
-    .puzzle-grid {
-        width: min(85vw, 300px);
-        aspect-ratio: 3/5;
-    }
-    
-    .puzzle-slot {
-        width: clamp(40px, 11vw, 60px);
-        height: clamp(48px, 13.2vw, 72px);
     }
 }
 

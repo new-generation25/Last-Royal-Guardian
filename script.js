@@ -306,11 +306,9 @@ class PuzzleGame {
         piece.dataset.position = row * this.cols + col;
         piece.draggable = true;
 
-        // 그리드와 동일한 크기 계산
-        const gridElement = document.querySelector('.puzzle-grid');
-        const gridRect = gridElement.getBoundingClientRect();
-        const pieceWidth = (gridRect.width - 8) / 3; // gap 2px * 4 = 8px
-        const pieceHeight = (gridRect.height - 10) / 5; // gap 2px * 6 = 12px, 약간 여유
+        // 고정 크기로 설정 (모바일 최적화)
+        const pieceWidth = 25;
+        const pieceHeight = 30;
         
         // 실제 그리드 크기
         const totalWidth = pieceWidth * this.cols;
@@ -332,7 +330,7 @@ class PuzzleGame {
         const backgroundX = -col * (scaledWidth / this.cols);
         const backgroundY = -row * (scaledHeight / this.rows);
         
-        // 조각을 그리드 셀과 정확히 같은 크기로 설정
+        // 조각 스타일 설정
         piece.style.width = `${pieceWidth}px`;
         piece.style.height = `${pieceHeight}px`;
         piece.style.backgroundImage = `url(${this.currentImage})`;
@@ -341,6 +339,7 @@ class PuzzleGame {
         piece.style.backgroundRepeat = 'no-repeat';
         piece.style.border = '1px solid #333';
         piece.style.boxSizing = 'border-box';
+        piece.style.borderRadius = '3px';
         
         this.setupDragAndDrop(piece);
         this.setupTouchEvents(piece);
