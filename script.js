@@ -198,11 +198,11 @@ class PuzzleGame {
         
         // 배경 이미지 위치 계산 (70px 단위)
         const bgX = -(col * 70);
-        const bgY = -(row * 68); // 높이 조정
+        const bgY = -(row * 70); // 정사각형으로 복원
         
         piece.style.backgroundImage = `url(${this.currentImage})`;
         piece.style.backgroundPosition = `${bgX}px ${bgY}px`;
-        piece.style.backgroundSize = '210px 340px'; // 배경 크기 조정
+        piece.style.backgroundSize = '210px 350px'; // 배경 크기 복원
         
         this.setupPieceDragEvents(piece);
         this.setupPieceTouchEvents(piece);
@@ -227,7 +227,7 @@ class PuzzleGame {
             dragImage.style.top = '-1000px';
             dragImage.style.left = '-1000px';
             dragImage.style.width = '70px';
-            dragImage.style.height = '68px'; // 높이 조정
+            dragImage.style.height = '70px'; // 정사각형으로 복원
             dragImage.style.opacity = '0.8';
             dragImage.style.pointerEvents = 'none';
             dragImage.style.transform = 'none'; // 변형 제거
