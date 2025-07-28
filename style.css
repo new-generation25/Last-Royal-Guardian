@@ -118,7 +118,7 @@ body {
     flex: 1;
     display: grid;
     grid-template-columns: 70px 222px 70px; /* 중앙 영역 조정 */
-    grid-template-rows: 70px 362px 70px; /* 중앙 영역 조정 */
+    grid-template-rows: 70px 362px 80px; /* 하단 영역 높이 증가 */
     gap: 6px; /* 간격 6px로 통일 */
     padding: 5px; /* 패딩 더 줄임 */
     justify-content: center;
@@ -237,8 +237,8 @@ body {
     grid-row: 3;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* 상단 정렬로 변경 */
-    padding-top: 5px; /* 추가 여백 */
+    align-items: center; /* 중앙 정렬로 변경 */
+    padding-top: 0; /* 여백 제거 */
 }
 
 .bottom-area .puzzle-slots {
