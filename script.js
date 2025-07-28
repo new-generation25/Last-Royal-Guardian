@@ -228,8 +228,8 @@ class PuzzleGame {
             dragImage.style.opacity = '0.8';
             document.body.appendChild(dragImage);
             
-            // 드래그 이미지 위치 설정 (마우스 중앙에 맞춤)
-            e.dataTransfer.setDragImage(dragImage, 35, 35);
+            // 드래그 이미지 위치 설정 (실제 마우스 위치에 맞춤)
+            e.dataTransfer.setDragImage(dragImage, offsetX, offsetY);
             
             // 임시 요소 제거
             setTimeout(() => {
