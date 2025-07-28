@@ -285,10 +285,11 @@ body {
 }
 
 .puzzle-piece.dragging {
-    opacity: 0.8;
-    transform: scale(1.1);
+    opacity: 0.3;
+    transform: scale(1.05);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     z-index: 1000;
+    pointer-events: none;
 }
 
 /* 올바른 위치에 놓인 조각 - 초록색 테두리 */

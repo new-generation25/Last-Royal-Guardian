@@ -213,7 +213,7 @@ class PuzzleGame {
         piece.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('text/plain', piece.id);
             
-            // 드래그 이미지 설정 (손가락 위치에 맞춤)
+            // 드래그 이미지 설정 (마우스 위치에 맞춤)
             const rect = piece.getBoundingClientRect();
             const offsetX = e.clientX - rect.left;
             const offsetY = e.clientY - rect.top;
@@ -223,13 +223,19 @@ class PuzzleGame {
             dragImage.style.position = 'absolute';
             dragImage.style.top = '-1000px';
             dragImage.style.left = '-1000px';
+            dragImage.style.width = '70px';
+            dragImage.style.height = '70px';
+            dragImage.style.opacity = '0.8';
             document.body.appendChild(dragImage);
             
-            e.dataTransfer.setDragImage(dragImage, offsetX, offsetY);
+            // 드래그 이미지 위치 설정 (마우스 중앙에 맞춤)
+            e.dataTransfer.setDragImage(dragImage, 35, 35);
             
             // 임시 요소 제거
             setTimeout(() => {
-                document.body.removeChild(dragImage);
+                if (document.body.contains(dragImage)) {
+                    document.body.removeChild(dragImage);
+                }
             }, 0);
             
             piece.classList.add('dragging');
