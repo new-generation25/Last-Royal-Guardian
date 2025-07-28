@@ -180,8 +180,8 @@ body {
     align-items: center;
     background: #8B5CF6; /* 보라색 배경 */
     border-radius: 8px;
-    padding: 6px; /* 여백 */
-    border: 1px solid #8B5CF6; /* 얇은 보라색 경계 */
+    padding: 4px; /* 여백 4px로 조정 */
+    border: 3px solid #8B5CF6; /* 보라색 경계 3px로 조정 */
 }
 
 .puzzle-grid {
