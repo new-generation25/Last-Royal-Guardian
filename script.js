@@ -92,39 +92,47 @@ class PuzzleGame {
         const screenWidth = window.innerWidth;
         const screenHeight = window.innerHeight;
         
-        // 사용 가능한 영역 계산 (헤더, 버튼, 여백 제외)
-        const availableWidth = Math.min(screenWidth * 0.8, 400); // 최대 400px
-        const availableHeight = Math.min(screenHeight * 0.7, 600); // 최대 600px
+        // 헤더, 버튼 공간 제외 (약 120px)
+        const availableWidth = screenWidth;
+        const availableHeight = screenHeight - 120;
         
-        // 3:5 비율에 맞는 최적 크기 계산
-        let optimalWidth, optimalHeight;
+        // 전체 화면을 5x7 그리드로 분할
+        // 가로: 좌측(1) + 퍼즐판(3) + 우측(1) = 5칸
+        // 세로: 상단(1) + 퍼즐판(5) + 하단(1) = 7칸
         
-        if (availableWidth / availableHeight > 3/5) {
-            // 높이 기준으로 계산
-            optimalHeight = availableHeight;
-            optimalWidth = optimalHeight * (3/5);
-        } else {
-            // 너비 기준으로 계산
-            optimalWidth = availableWidth;
-            optimalHeight = optimalWidth * (5/3);
-        }
+        const gridUnitWidth = availableWidth / 5;
+        const gridUnitHeight = availableHeight / 7;
         
-        // 최소 크기 보장 (더 크게 설정)
-        optimalWidth = Math.max(240, optimalWidth);   // 최소 240px
-        optimalHeight = Math.max(400, optimalHeight); // 최소 400px
+        // 퍼즐판 크기 (3x5 그리드 단위)
+        const puzzleWidth = gridUnitWidth * 3;
+        const puzzleHeight = gridUnitHeight * 5;
+        
+        // 각 퍼즐 조각 크기 (퍼즐판을 3x5로 나눔)
+        const pieceWidth = puzzleWidth / 3;
+        const pieceHeight = puzzleHeight / 5;
         
         this.optimalImageSize = {
-            width: optimalWidth,
-            height: optimalHeight
+            width: puzzleWidth,
+            height: puzzleHeight
         };
         
-        // 퍼즐 조각 크기 계산
         this.pieceSize = {
-            width: (optimalWidth - 4) / 3, // gap 고려
-            height: (optimalHeight - 8) / 5 // gap 고려
+            width: pieceWidth,
+            height: pieceHeight
         };
         
-        console.log('최적 크기 계산:', this.optimalImageSize, this.pieceSize);
+        // 슬롯 영역 크기도 계산
+        this.slotAreaSize = {
+            width: gridUnitWidth,
+            height: gridUnitHeight
+        };
+        
+        console.log('그리드 기반 크기 계산:', {
+            gridUnit: [gridUnitWidth, gridUnitHeight],
+            puzzle: this.optimalImageSize,
+            piece: this.pieceSize,
+            slotArea: this.slotAreaSize
+        });
     }
     
     updateLayoutSizes() {
@@ -134,6 +142,8 @@ class PuzzleGame {
         root.style.setProperty('--puzzle-height', this.optimalImageSize.height + 'px');
         root.style.setProperty('--piece-width', this.pieceSize.width + 'px');
         root.style.setProperty('--piece-height', this.pieceSize.height + 'px');
+        root.style.setProperty('--slot-area-width', this.slotAreaSize.width + 'px');
+        root.style.setProperty('--slot-area-height', this.slotAreaSize.height + 'px');
         
         // 퍼즐 그리드 크기 직접 업데이트
         if (this.puzzleGrid) {
@@ -373,15 +383,35 @@ class PuzzleGame {
         const totalWidth = this.optimalImageSize.width;
         const totalHeight = this.optimalImageSize.height;
 
-        // 배경 위치 계산 (정확한 조각 분할)
-        const backgroundX = -col * pieceWidth;
-        const backgroundY = -row * pieceHeight;
+        // 이미지를 퍼즐 전체 크기에 맞게 정확히 스케일링
+        const imageAspect = img.width / img.height;
+        const puzzleAspect = totalWidth / totalHeight;
+        let scaledWidth, scaledHeight;
+        
+        // 이미지가 퍼즐판을 완전히 채우도록 계산
+        if (imageAspect > puzzleAspect) {
+            // 이미지가 더 가로로 길 때 - 높이를 맞추고 너비는 잘림
+            scaledHeight = totalHeight;
+            scaledWidth = scaledHeight * imageAspect;
+        } else {
+            // 이미지가 더 세로로 길 때 - 너비를 맞추고 높이는 잘림
+            scaledWidth = totalWidth;
+            scaledHeight = scaledWidth / imageAspect;
+        }
+        
+        // 중앙 정렬을 위한 오프셋 계산
+        const offsetX = (scaledWidth - totalWidth) / 2;
+        const offsetY = (scaledHeight - totalHeight) / 2;
+
+        // 배경 위치 계산 (정확한 조각 분할 + 중앙 정렬)
+        const backgroundX = -col * (scaledWidth / this.cols) + offsetX;
+        const backgroundY = -row * (scaledHeight / this.rows) + offsetY;
         
         // 조각 스타일 설정
         piece.style.width = `${pieceWidth}px`;
         piece.style.height = `${pieceHeight}px`;
         piece.style.backgroundImage = `url(${this.currentImage})`;
-        piece.style.backgroundSize = `${totalWidth}px ${totalHeight}px`;
+        piece.style.backgroundSize = `${scaledWidth}px ${scaledHeight}px`;
         piece.style.backgroundPosition = `${backgroundX}px ${backgroundY}px`;
         piece.style.backgroundRepeat = 'no-repeat';
         piece.style.border = '1px solid #333';

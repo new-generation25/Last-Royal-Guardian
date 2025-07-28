@@ -288,46 +288,63 @@ body {
     gap: clamp(3px, 1vw, 8px);
 }
 
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-    .game-container {
-        width: 98vw;
-        padding: 8px;
-    }
-    
-    .middle-section {
-        flex-direction: row;
-        gap: 8px;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .left-area,
-    .right-area {
-        display: flex !important;
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .left-area .puzzle-slots,
-    .right-area .puzzle-slots {
-        flex-direction: column;
-        gap: 3px;
-        max-height: 60vh;
-        overflow-y: auto;
-        padding: 5px;
-        justify-content: flex-start;
-        display: flex !important;
-        visibility: visible !important;
-    }
+/* 5x7 그리드 레이아웃 */
+.game-board {
+    width: 100vw;
+    height: calc(100vh - 120px);
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+    grid-template-rows: 1fr 5fr 1fr;
+    gap: 0;
+    padding: 0;
+    margin: 0;
 }
 
-@media (max-width: 480px) {
-    .game-container {
-        width: 100vw;
-        padding: 5px;
-        border-radius: 0;
-    }
+.top-area {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.middle-section {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+    gap: 0;
+}
+
+.left-area {
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.puzzle-board {
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.right-area {
+    grid-column: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.bottom-area {
+    grid-column: 2;
+    grid-row: 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* 애니메이션 */
