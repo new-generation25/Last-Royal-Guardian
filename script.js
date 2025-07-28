@@ -279,6 +279,7 @@ class PuzzleGame {
                 piece.textContent = `${index + 1}`;
                 
                 this.setupDragAndDrop(piece);
+                this.setupTouchEvents(piece);
                 this.puzzlePieces.push(piece);
             }
         }
@@ -296,11 +297,10 @@ class PuzzleGame {
         piece.dataset.position = row * this.cols + col;
         piece.draggable = true;
 
-        // 고정 퍼즐 조각 크기 (3:5 비율)
-        const pieceWidth = 60;
-        const pieceHeight = 100;
-        const totalWidth = pieceWidth * this.cols;
-        const totalHeight = pieceHeight * this.rows;
+        // 반응형 퍼즐 조각 크기 (뷰포트 기준)
+        const pieceSize = Math.min(window.innerWidth * 0.08, window.innerHeight * 0.08, 80);
+        const totalWidth = pieceSize * this.cols;
+        const totalHeight = pieceSize * this.rows;
 
         // 이미지를 퍼즐 전체 크기에 맞게 스케일링
         const imageAspect = img.width / img.height;
@@ -315,12 +315,13 @@ class PuzzleGame {
         }
         const backgroundX = -col * (scaledWidth / this.cols);
         const backgroundY = -row * (scaledHeight / this.rows);
-        piece.style.width = `${pieceWidth}px`;
-        piece.style.height = `${pieceHeight}px`;
+        piece.style.width = `${pieceSize}px`;
+        piece.style.height = `${pieceSize}px`;
         piece.style.backgroundImage = `url(${this.currentImage})`;
         piece.style.backgroundSize = `${scaledWidth}px ${scaledHeight}px`;
         piece.style.backgroundPosition = `${backgroundX}px ${backgroundY}px`;
         this.setupDragAndDrop(piece);
+        this.setupTouchEvents(piece);
         return piece;
     }
 
@@ -333,6 +334,131 @@ class PuzzleGame {
         piece.addEventListener('dragend', () => {
             piece.classList.remove('dragging');
         });
+    }
+
+    setupTouchEvents(piece) {
+        let startX, startY, currentX, currentY;
+        let isDragging = false;
+        let originalParent, originalNextSibling;
+
+        piece.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            startX = touch.clientX;
+            startY = touch.clientY;
+            currentX = startX;
+            currentY = startY;
+            
+            // 원래 위치 저장
+            originalParent = piece.parentElement;
+            originalNextSibling = piece.nextSibling;
+            
+            // 드래그 시작
+            isDragging = true;
+            piece.classList.add('dragging');
+            
+            // 퍼즐 조각을 body에 추가하여 자유롭게 이동
+            document.body.appendChild(piece);
+            piece.style.position = 'fixed';
+            piece.style.zIndex = '1000';
+            piece.style.pointerEvents = 'none';
+            
+            // 초기 위치 설정
+            const rect = piece.getBoundingClientRect();
+            piece.style.left = `${rect.left}px`;
+            piece.style.top = `${rect.top}px`;
+        });
+
+        piece.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            
+            const touch = e.touches[0];
+            currentX = touch.clientX;
+            currentY = touch.clientY;
+            
+            // 퍼즐 조각 이동
+            piece.style.left = `${currentX - startX + parseInt(piece.style.left || 0)}px`;
+            piece.style.top = `${currentY - startY + parseInt(piece.style.top || 0)}px`;
+            
+            // 드롭 영역 하이라이트
+            this.highlightDropZones(currentX, currentY);
+        });
+
+        piece.addEventListener('touchend', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            
+            isDragging = false;
+            piece.classList.remove('dragging');
+            
+            // 드롭 영역 하이라이트 제거
+            this.removeDropZoneHighlights();
+            
+            // 드롭 가능한 영역 찾기
+            const dropZone = this.findDropZone(currentX, currentY);
+            
+            if (dropZone) {
+                // 드롭 영역에 배치
+                this.placePieceInZone(piece, dropZone);
+            } else {
+                // 원래 위치로 복원
+                this.restorePiece(piece, originalParent, originalNextSibling);
+            }
+            
+            // 스타일 초기화
+            piece.style.position = '';
+            piece.style.zIndex = '';
+            piece.style.left = '';
+            piece.style.top = '';
+            piece.style.pointerEvents = '';
+        });
+    }
+
+    highlightDropZones(x, y) {
+        // 모든 드롭 영역에서 하이라이트 제거
+        this.removeDropZoneHighlights();
+        
+        // 마우스 위치의 드롭 영역 하이라이트
+        const element = document.elementFromPoint(x, y);
+        if (element && (element.classList.contains('grid-cell') || element.classList.contains('puzzle-slot'))) {
+            element.classList.add('drag-over');
+        }
+    }
+
+    removeDropZoneHighlights() {
+        document.querySelectorAll('.drag-over').forEach(el => {
+            el.classList.remove('drag-over');
+        });
+    }
+
+    findDropZone(x, y) {
+        const element = document.elementFromPoint(x, y);
+        if (element && element.classList.contains('grid-cell') && !element.hasChildNodes()) {
+            return element;
+        }
+        if (element && element.classList.contains('puzzle-slot') && !element.hasChildNodes()) {
+            return element;
+        }
+        return null;
+    }
+
+    placePieceInZone(piece, zone) {
+        if (zone.classList.contains('grid-cell')) {
+            this.placePiece(piece, zone);
+        } else if (zone.classList.contains('puzzle-slot')) {
+            zone.appendChild(piece);
+        }
+    }
+
+    restorePiece(piece, parent, nextSibling) {
+        if (parent) {
+            if (nextSibling) {
+                parent.insertBefore(piece, nextSibling);
+            } else {
+                parent.appendChild(piece);
+            }
+        }
     }
 
     distributePieces() {
