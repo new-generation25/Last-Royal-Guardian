@@ -326,6 +326,8 @@ body {
         overflow-x: auto;
         padding: 15px 0;
         justify-content: center;
+        display: flex !important;
+        visibility: visible !important;
     }
     
     .puzzle-area {
@@ -424,6 +426,8 @@ body {
         overflow-x: auto;
         padding: 12px 0;
         justify-content: center;
+        display: flex !important;
+        visibility: visible !important;
     }
     
     .puzzle-grid {

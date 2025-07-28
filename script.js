@@ -349,6 +349,8 @@ class PuzzleGame {
     }
 
     distributePieces() {
+        console.log('퍼즐 조각 분배 시작...');
+        
         // 퍼즐 조각들을 섞기
         const shuffledPieces = [...this.puzzlePieces].sort(() => Math.random() - 0.5);
         
@@ -357,6 +359,7 @@ class PuzzleGame {
         
         // 상단 영역에 3개
         const topPieces = shuffledPieces.slice(0, 3);
+        console.log('상단 영역에 배치:', topPieces.length, '개');
         topPieces.forEach(piece => {
             const slot = this.createPuzzleSlot();
             slot.appendChild(piece);
@@ -365,6 +368,7 @@ class PuzzleGame {
 
         // 좌측 영역에 5개
         const leftPieces = shuffledPieces.slice(3, 8);
+        console.log('좌측 영역에 배치:', leftPieces.length, '개');
         leftPieces.forEach(piece => {
             const slot = this.createPuzzleSlot();
             slot.appendChild(piece);
@@ -373,29 +377,37 @@ class PuzzleGame {
 
         // 우측 영역에 5개
         const rightPieces = shuffledPieces.slice(8, 13);
+        console.log('우측 영역에 배치:', rightPieces.length, '개');
         rightPieces.forEach(piece => {
             const slot = this.createPuzzleSlot();
             slot.appendChild(piece);
             this.rightSlots.appendChild(slot);
         });
 
-        // 나머지는 하단 영역에 (2개)
+        // 하단 영역에 2개
         const bottomPieces = shuffledPieces.slice(13);
+        console.log('하단 영역에 배치:', bottomPieces.length, '개');
         bottomPieces.forEach(piece => {
             const slot = this.createPuzzleSlot();
             slot.appendChild(piece);
             this.bottomSlots.appendChild(slot);
         });
         
-        // 좌우 영역이 보이지 않는다면 강제로 표시
-        if (this.leftSlots.children.length > 0) {
-            this.leftSlots.style.display = 'flex';
-            this.leftSlots.style.visibility = 'visible';
-        }
-        if (this.rightSlots.children.length > 0) {
-            this.rightSlots.style.display = 'flex';
-            this.rightSlots.style.visibility = 'visible';
-        }
+        // 모든 영역 강제 표시
+        this.topSlots.style.display = 'flex';
+        this.topSlots.style.visibility = 'visible';
+        this.leftSlots.style.display = 'flex';
+        this.leftSlots.style.visibility = 'visible';
+        this.rightSlots.style.display = 'flex';
+        this.rightSlots.style.visibility = 'visible';
+        this.bottomSlots.style.display = 'flex';
+        this.bottomSlots.style.visibility = 'visible';
+        
+        console.log('퍼즐 조각 분배 완료');
+        console.log('상단 슬롯:', this.topSlots.children.length, '개');
+        console.log('좌측 슬롯:', this.leftSlots.children.length, '개');
+        console.log('우측 슬롯:', this.rightSlots.children.length, '개');
+        console.log('하단 슬롯:', this.bottomSlots.children.length, '개');
     }
 
     createPuzzleSlot() {
