@@ -1,3 +1,4 @@
+/* 기본 리셋 */
 * {
     margin: 0;
     padding: 0;
@@ -8,15 +9,13 @@ body {
     font-family: 'Arial', sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    margin: 0;
     overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
 }
 
-/* 게임 인트로 스타일 */
+/* 게임 인트로 */
 .game-intro {
     position: fixed;
     top: 0;
@@ -24,15 +23,11 @@ body {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.9);
-    display: none;
+    display: flex;
     align-items: center;
     justify-content: center;
     z-index: 2000;
     animation: fadeIn 0.5s ease;
-}
-
-.game-intro.show {
-    display: flex;
 }
 
 .intro-content {
@@ -56,41 +51,37 @@ body {
     line-height: 1.5;
 }
 
-/* 메인 게임 컨테이너 - Figma 디자인에 맞게 고정 크기 */
+/* 게임 컨테이너 */
 .game-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
     background: rgba(255, 255, 255, 0.95);
-    border-radius: 20px;
-    padding: 10px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    width: 320px;
-    height: 550px;
+}
+
+/* 게임 헤더 */
+.game-header {
+    height: 120px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    overflow: hidden;
-    position: relative;
-}
-
-.game-header {
-    text-align: center;
-    margin-bottom: 10px;
-    width: 100%;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.9);
+    border-bottom: 2px solid #ddd;
 }
 
 .game-header h1 {
     color: #333;
-    margin-bottom: 5px;
     font-size: 1.5em;
-    font-weight: bold;
+    margin-bottom: 10px;
 }
 
 .controls {
     display: flex;
-    justify-content: center;
-    gap: 5px;
-    margin-bottom: 10px;
+    gap: 8px;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .btn {
@@ -122,18 +113,20 @@ body {
     transform: none;
 }
 
-/* 게임 보드 - Figma 디자인에 맞게 그리드 레이아웃 */
+/* 5x7 그리드 게임보드 */
 .game-board {
-    width: 100%;
-    height: calc(100% - 80px); /* 헤더 높이 제외 */
+    flex: 1;
     display: grid;
-    grid-template-columns: 1fr 3fr 1fr;
-    grid-template-rows: 60px 1fr 60px;
+    grid-template-columns: 70px 210px 70px;
+    grid-template-rows: 70px 350px 70px;
     gap: 5px;
-    padding: 0;
+    padding: 10px;
+    justify-content: center;
+    align-content: center;
+    min-height: calc(100vh - 120px);
 }
 
-/* 상단 퍼즐 영역 */
+/* 상단 영역 */
 .top-area {
     grid-column: 2;
     grid-row: 1;
@@ -144,75 +137,97 @@ body {
 
 .top-area .puzzle-slots {
     display: flex;
-    gap: 5px;
+    flex-direction: row;
+    gap: 2px;
+    width: 100%;
+    height: 100%;
     justify-content: center;
     align-items: center;
 }
 
-/* 중앙 영역 */
+/* 중간 섹션 */
 .middle-section {
     grid-column: 1 / -1;
     grid-row: 2;
     display: grid;
-    grid-template-columns: 60px 1fr 60px;
+    grid-template-columns: 70px 210px 70px;
     gap: 5px;
-    align-items: center;
 }
 
-/* 좌측 퍼즐 영역 */
+/* 좌측 영역 */
 .left-area {
+    grid-column: 1;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    gap: 5px;
+    align-items: center;
 }
 
 .left-area .puzzle-slots {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 2px;
+    width: 100%;
+    height: 100%;
     justify-content: center;
     align-items: center;
 }
 
-/* 퍼즐 보드 (중앙) */
+/* 퍼즐판 */
 .puzzle-board {
+    grid-column: 2;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
 }
 
 .puzzle-grid {
-    width: 180px;
-    height: 300px;
+    width: 210px;
+    height: 350px;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(5, 1fr);
+    grid-template-columns: repeat(3, 70px);
+    grid-template-rows: repeat(5, 70px);
     gap: 1px;
-    border: 2px solid #333;
-    border-radius: 5px;
+    border: 3px solid #333;
+    border-radius: 8px;
     background: #f5f5f5;
 }
 
-/* 우측 퍼즐 영역 */
-.right-area {
+.grid-cell {
+    width: 70px;
+    height: 70px;
+    border: 1px solid #bbb;
+    background: #fff;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 5px;
+    position: relative;
+    overflow: hidden;
+}
+
+.grid-cell.drag-over {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+}
+
+/* 우측 영역 */
+.right-area {
+    grid-column: 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .right-area .puzzle-slots {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 2px;
+    width: 100%;
+    height: 100%;
     justify-content: center;
     align-items: center;
 }
 
-/* 하단 퍼즐 영역 */
+/* 하단 영역 */
 .bottom-area {
     grid-column: 2;
     grid-row: 3;
@@ -223,30 +238,25 @@ body {
 
 .bottom-area .puzzle-slots {
     display: flex;
-    gap: 5px;
+    flex-direction: row;
+    gap: 2px;
+    width: 100%;
+    height: 100%;
     justify-content: center;
     align-items: center;
 }
 
-/* 퍼즐 슬롯 스타일 */
-.puzzle-slots {
-    display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
+/* 퍼즐 슬롯 */
 .puzzle-slot {
-    width: 50px;
-    height: 50px;
+    width: 70px;
+    height: 70px;
     border: 1px dashed #999;
-    border-radius: 8px;
+    border-radius: 5px;
+    background: #f0f0f0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f0f0f0;
-    box-sizing: border-box;
-    flex-shrink: 0;
+    position: relative;
     overflow: hidden;
 }
 
@@ -255,65 +265,42 @@ body {
     background: rgba(102, 126, 234, 0.1);
 }
 
-/* 퍼즐 조각 스타일 */
+/* 퍼즐 조각 */
 .puzzle-piece {
-    width: 50px;
-    height: 50px;
-    border-radius: 8px;
-    border: 1px solid #333;
+    width: 70px;
+    height: 70px;
+    border: 2px solid #333;
+    border-radius: 5px;
     background-repeat: no-repeat;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    background-size: 210px 350px;
     cursor: grab;
-    transition: box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
     touch-action: none;
     user-select: none;
-    box-sizing: border-box;
-    max-width: 100%;
-    max-height: 100%;
 }
 
 .puzzle-piece:hover {
-    transform: scale(1.025);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .puzzle-piece.dragging {
-    opacity: 0.7;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    opacity: 0.8;
     transform: scale(1.1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
 }
 
-/* 그리드 셀 스타일 */
-.grid-cell {
-    width: 100%;
-    height: 100%;
-    border: 1px solid #bbb;
-    box-sizing: border-box;
-    background: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 3px;
-    transition: all 0.3s ease;
-}
-
-.grid-cell.drop-zone {
-    border-color: #667eea;
-    background: rgba(102, 126, 234, 0.1);
-}
-
+/* 완성된 조각 스타일 */
 .grid-cell.occupied .puzzle-piece {
     border: 4px inset #28a745 !important;
-    box-shadow: inset 0 2px 8px rgba(40, 167, 69, 0.3), 0 2px 8px rgba(0,0,0,0.08);
-}
-
-.grid-cell.occupied {
-    background: #fff;
+    box-shadow: inset 0 2px 8px rgba(40, 167, 69, 0.3), 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* 원본 이미지 오버레이 */
 .original-image-overlay {
-    position: absolute;
+    position: fixed;
     top: 10px;
     left: 10px;
     right: 10px;
@@ -322,22 +309,28 @@ body {
     display: none;
     align-items: center;
     justify-content: center;
-    border-radius: 5px;
-    z-index: 1000;
-}
-
-.original-image-overlay img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    border-radius: 5px;
+    border-radius: 10px;
+    z-index: 1500;
 }
 
 .original-image-overlay.show {
     display: flex;
 }
 
+.original-image-overlay img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
 /* 애니메이션 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 @keyframes slideIn {
     from {
         opacity: 0;
@@ -349,26 +342,12 @@ body {
     }
 }
 
-.puzzle-piece {
-    animation: slideIn 0.5s ease;
-}
-
 @keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.05);
-    }
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
 }
 
-.puzzle-slot.highlight {
-    animation: pulse 1s infinite;
-    border-color: #28a745;
-}
-
-/* 완성 효과 */
-@keyframes flashComplete {
+@keyframes complete {
     0%, 100% { 
         background: rgba(255, 215, 0, 0);
         transform: scale(1);
@@ -388,45 +367,40 @@ body {
 }
 
 .puzzle-complete {
-    animation: flashComplete 0.8s ease-in-out 3;
+    animation: complete 0.8s ease-in-out 3;
 }
 
-/* 정답 힌트 효과 */
 .hint-highlight {
-    animation: hintPulse 2s ease-in-out;
+    animation: pulse 2s ease-in-out;
     border: 3px solid #ffd700 !important;
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.8) !important;
 }
 
-@keyframes hintPulse {
-    0%, 100% { 
-        box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
-    }
-    50% { 
-        box-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 215, 0, 0.6);
-    }
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
 /* 터치 최적화 */
 @media (hover: none) and (pointer: coarse) {
-    .puzzle-piece {
-        cursor: default;
-    }
-    
-    .btn {
-        cursor: default;
-    }
-    
     .puzzle-piece:hover {
         transform: none;
     }
     
     .btn:hover {
         transform: none;
+    }
+}
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+    .game-board {
+        padding: 5px;
+        gap: 2px;
+    }
+    
+    .controls {
+        gap: 5px;
+    }
+    
+    .btn {
+        font-size: 11px;
+        padding: 6px 10px;
+        min-width: 60px;
     }
 }
