@@ -401,6 +401,8 @@ class PuzzleGame {
             if (dropZone) {
                 // 드롭 영역에 배치
                 this.placePieceInZone(piece, dropZone);
+                // 완성 체크 추가
+                setTimeout(() => this.checkCompletion(), 100);
             } else {
                 // 원래 위치로 복원
                 this.restorePiece(piece, originalParent, originalNextSibling);
@@ -448,6 +450,10 @@ class PuzzleGame {
             this.placePiece(piece, zone);
         } else if (zone.classList.contains('puzzle-slot')) {
             zone.appendChild(piece);
+            // 슬롯에서 그리드로 이동한 경우 완성 체크
+            if (piece.parentElement.classList.contains('grid-cell')) {
+                this.checkCompletion();
+            }
         }
     }
 
@@ -668,16 +674,22 @@ class PuzzleGame {
     }
 
     checkCompletion() {
+        console.log('완성 체크 시작...');
         const correctPieces = this.gridCells.filter(cell => {
             const piece = cell.firstChild;
             if (!piece) return false;
             
             const piecePosition = parseInt(piece.dataset.position);
             const cellPosition = parseInt(cell.dataset.position);
-            return piecePosition === cellPosition;
+            const isCorrect = piecePosition === cellPosition;
+            console.log(`셀 ${cellPosition}: 조각 ${piecePosition} - ${isCorrect ? '정답' : '틀림'}`);
+            return isCorrect;
         });
 
+        console.log(`정답 조각: ${correctPieces.length}/${this.totalPieces}`);
+
         if (correctPieces.length === this.totalPieces) {
+            console.log('퍼즐 완성!');
             // 완성 효과
             this.puzzleGrid.classList.add('puzzle-complete');
             
