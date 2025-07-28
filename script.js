@@ -94,7 +94,7 @@ class PuzzleGame {
         
         // 헤더, 버튼 공간 제외 (약 120px)
         const availableWidth = screenWidth;
-        const availableHeight = screenHeight - 120;
+        const availableHeight = Math.max(screenHeight - 120, 500); // 최소 높이 보장
         
         // 전체 화면을 5x7 그리드로 분할
         // 가로: 좌측(1) + 퍼즐판(3) + 우측(1) = 5칸
@@ -107,9 +107,9 @@ class PuzzleGame {
         const puzzleWidth = gridUnitWidth * 3;
         const puzzleHeight = gridUnitHeight * 5;
         
-        // 각 퍼즐 조각 크기 (퍼즐판을 3x5로 나눔)
-        const pieceWidth = puzzleWidth / 3;
-        const pieceHeight = puzzleHeight / 5;
+        // 각 퍼즐 조각 크기 (퍼즐판을 3x5로 나눔) - 겹침 방지를 위해 여백 추가
+        const pieceWidth = Math.floor(puzzleWidth / 3) - 2; // 2px 여백
+        const pieceHeight = Math.floor(puzzleHeight / 5) - 2; // 2px 여백
         
         this.optimalImageSize = {
             width: puzzleWidth,
@@ -128,6 +128,8 @@ class PuzzleGame {
         };
         
         console.log('그리드 기반 크기 계산:', {
+            screen: [screenWidth, screenHeight],
+            available: [availableWidth, availableHeight],
             gridUnit: [gridUnitWidth, gridUnitHeight],
             puzzle: this.optimalImageSize,
             piece: this.pieceSize,
@@ -693,7 +695,8 @@ class PuzzleGame {
         
         // 올바른 위치에 놓였는지 확인
         if (piecePosition === cellPosition) {
-            piece.style.border = '1px solid #28a745';
+            piece.style.border = '4px solid #28a745';
+            piece.style.borderInset = '4px';
             
             // 딸깍 효과음 재생
             try {

@@ -207,6 +207,7 @@ body {
     margin: 1px;
     box-sizing: border-box;
     flex-shrink: 0;
+    overflow: hidden;
 }
 
 .puzzle-slot.drag-over {
@@ -298,6 +299,7 @@ body {
     gap: 0;
     padding: 0;
     margin: 0;
+    min-height: 500px;
 }
 
 .top-area {
@@ -306,6 +308,19 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
+}
+
+.top-area .puzzle-slots {
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 .middle-section {
@@ -322,6 +337,21 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+}
+
+.left-area .puzzle-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    padding: 2px;
+    box-sizing: border-box;
 }
 
 .puzzle-board {
@@ -337,6 +367,21 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+}
+
+.right-area .puzzle-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    padding: 2px;
+    box-sizing: border-box;
 }
 
 .bottom-area {
@@ -345,6 +390,19 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
+}
+
+.bottom-area .puzzle-slots {
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 /* 애니메이션 */
