@@ -81,7 +81,12 @@ class PuzzleGame {
     }
 
     loadDefaultImage() {
-        // 기본 이미지 로드
+        // 기본 이미지 로드 - 더 안정적인 방법
+        console.log('기본 이미지 로드 시작...');
+        
+        // 먼저 빈 퍼즐 그리드 생성
+        this.createEmptyPuzzleGrid();
+        
         const defaultImage = new Image();
         defaultImage.crossOrigin = 'anonymous';
         
@@ -90,19 +95,24 @@ class PuzzleGame {
             this.currentImage = 'gima.png';
             this.originalImageData = defaultImage;
             this.originalImage.src = this.currentImage;
-            this.createPuzzlePieces();
-            this.showGameIntro();
+            this.introImage.src = this.currentImage;
+            
+            // 3초 후 퍼즐 조각 생성
+            setTimeout(() => {
+                this.createPuzzlePieces();
+                this.showGameIntro();
+            }, 1000);
         };
         
         defaultImage.onerror = (error) => {
             console.error('기본 이미지 로드 실패:', error);
-            // 기본 이미지 로드 실패 시 빈 퍼즐 그리드만 표시
-            this.createEmptyPuzzleGrid();
+            // 기본 이미지 로드 실패 시에도 게임 진행 가능하도록
+            this.currentImage = null;
+            this.showGameIntro();
         };
         
         // 이미지 로드 시작
         defaultImage.src = 'gima.png';
-        console.log('기본 이미지 로드 시작...');
     }
 
     createEmptyPuzzleGrid() {
@@ -174,13 +184,21 @@ class PuzzleGame {
     }
 
     showGameIntro() {
-        this.gameIntro.classList.add('show');
-        
-        setTimeout(() => {
-            this.gameIntro.classList.remove('show');
+        // 이미지가 있으면 인트로 표시, 없으면 바로 게임 시작
+        if (this.currentImage) {
+            this.gameIntro.classList.add('show');
+            
+            setTimeout(() => {
+                this.gameIntro.classList.remove('show');
+                this.createPuzzlePieces();
+                this.resetHints();
+            }, 3000);
+        } else {
+            // 이미지가 없으면 바로 게임 시작
+            console.log('이미지 없이 게임 시작');
             this.createPuzzlePieces();
             this.resetHints();
-        }, 3000);
+        }
     }
 
     createPuzzlePieces() {
@@ -189,7 +207,8 @@ class PuzzleGame {
         this.puzzlePieces = [];
 
         if (!this.currentImage) {
-            console.error('현재 이미지가 없습니다.');
+            console.log('이미지가 없어서 색상 퍼즐 조각을 생성합니다.');
+            this.createColorPuzzlePieces();
             return;
         }
 
@@ -222,9 +241,50 @@ class PuzzleGame {
         
         img.onerror = (error) => {
             console.error('퍼즐 조각 생성 중 이미지 로드 실패:', error);
+            this.createColorPuzzlePieces();
         };
         
         img.src = this.currentImage;
+    }
+
+    createColorPuzzlePieces() {
+        // 색상 퍼즐 조각 생성 (이미지가 없을 때)
+        console.log('색상 퍼즐 조각 생성 중...');
+        
+        const colors = [
+            '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
+            '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
+            '#F8C471', '#82E0AA', '#F1948A', '#85C1E9', '#D7BDE2'
+        ];
+        
+        for (let row = 0; row < this.rows; row++) {
+            for (let col = 0; col < this.cols; col++) {
+                const piece = document.createElement('div');
+                piece.className = 'puzzle-piece';
+                piece.id = `piece-${row}-${col}`;
+                piece.dataset.row = row;
+                piece.dataset.col = col;
+                piece.dataset.position = row * this.cols + col;
+                piece.draggable = true;
+                
+                const index = row * this.cols + col;
+                piece.style.backgroundColor = colors[index];
+                piece.style.border = '2px solid #333';
+                piece.style.display = 'flex';
+                piece.style.alignItems = 'center';
+                piece.style.justifyContent = 'center';
+                piece.style.color = '#fff';
+                piece.style.fontWeight = 'bold';
+                piece.style.fontSize = '12px';
+                piece.textContent = `${index + 1}`;
+                
+                this.setupDragAndDrop(piece);
+                this.puzzlePieces.push(piece);
+            }
+        }
+        
+        console.log('색상 퍼즐 조각 생성 완료:', this.puzzlePieces.length, '개');
+        this.distributePieces();
     }
 
     createPuzzlePiece(row, col, img) {
