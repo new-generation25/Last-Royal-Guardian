@@ -9,22 +9,29 @@ class PuzzleGame {
         this.gridCells = [];
         this.originalImageData = null;
         
+        // 동적 크기 계산 변수들
+        this.optimalImageSize = null;
+        this.pieceSize = null;
+        
         this.initializeElements();
         this.setupEventListeners();
+        this.calculateOptimalSizes();
         this.createPuzzleGrid();
         
         // 기본 이미지 자동 로드
         this.loadDefaultImage();
         
-        // 윈도우 리사이즈 시 퍼즐 조각 크기만 조정 (재생성하지 않음)
+        // 윈도우 리사이즈 시 전체 재계산
         let resizeTimeout;
         window.addEventListener('resize', () => {
-            if (this.currentImage) {
-                clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(() => {
-                    this.resizePuzzlePieces();
-                }, 200);
-            }
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                this.calculateOptimalSizes();
+                this.updateLayoutSizes();
+                if (this.currentImage) {
+                    this.recreatePuzzlePieces();
+                }
+            }, 200);
         });
     }
 
@@ -80,16 +87,69 @@ class PuzzleGame {
         });
     }
 
+    calculateOptimalSizes() {
+        // 화면 크기 감지
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+        
+        // 사용 가능한 영역 계산 (헤더, 버튼, 여백 제외)
+        const availableWidth = screenWidth * 0.9; // 90% 사용
+        const availableHeight = screenHeight * 0.6; // 60% 사용 (상하 여백 고려)
+        
+        // 3:5 비율에 맞는 최적 크기 계산
+        let optimalWidth, optimalHeight;
+        
+        if (availableWidth / availableHeight > 3/5) {
+            // 높이 기준으로 계산
+            optimalHeight = availableHeight;
+            optimalWidth = optimalHeight * (3/5);
+        } else {
+            // 너비 기준으로 계산
+            optimalWidth = availableWidth;
+            optimalHeight = optimalWidth * (5/3);
+        }
+        
+        // 최소/최대 크기 제한
+        optimalWidth = Math.max(150, Math.min(optimalWidth, 300));
+        optimalHeight = Math.max(250, Math.min(optimalHeight, 500));
+        
+        this.optimalImageSize = {
+            width: optimalWidth,
+            height: optimalHeight
+        };
+        
+        // 퍼즐 조각 크기 계산
+        this.pieceSize = {
+            width: (optimalWidth - 4) / 3, // gap 고려
+            height: (optimalHeight - 8) / 5 // gap 고려
+        };
+        
+        console.log('최적 크기 계산:', this.optimalImageSize, this.pieceSize);
+    }
+    
+    updateLayoutSizes() {
+        // CSS 변수로 크기 업데이트
+        const root = document.documentElement;
+        root.style.setProperty('--puzzle-width', this.optimalImageSize.width + 'px');
+        root.style.setProperty('--puzzle-height', this.optimalImageSize.height + 'px');
+        root.style.setProperty('--piece-width', this.pieceSize.width + 'px');
+        root.style.setProperty('--piece-height', this.pieceSize.height + 'px');
+        
+        // 퍼즐 그리드 크기 직접 업데이트
+        if (this.puzzleGrid) {
+            this.puzzleGrid.style.width = this.optimalImageSize.width + 'px';
+            this.puzzleGrid.style.height = this.optimalImageSize.height + 'px';
+        }
+    }
+
     loadDefaultImage() {
-        // 기본 이미지 로드 - 더 안정적인 방법
         console.log('기본 이미지 로드 시작...');
         
-        // 먼저 빈 퍼즐 그리드 생성
+        // 크기 계산 및 레이아웃 업데이트
+        this.updateLayoutSizes();
         this.createEmptyPuzzleGrid();
         
         const defaultImage = new Image();
-        // CORS 문제 해결을 위해 crossOrigin 제거
-        // defaultImage.crossOrigin = 'anonymous';
         
         defaultImage.onload = () => {
             console.log('기본 이미지 로드 성공:', defaultImage.width, 'x', defaultImage.height);
@@ -98,21 +158,17 @@ class PuzzleGame {
             this.originalImage.src = this.currentImage;
             this.introImage.src = this.currentImage;
             
-            // 퍼즐 조각 생성
             this.createPuzzlePieces();
             this.showGameIntro();
         };
         
         defaultImage.onerror = (error) => {
             console.error('기본 이미지 로드 실패:', error);
-            console.log('색상 퍼즐로 대체합니다.');
-            // 기본 이미지 로드 실패 시 색상 퍼즐로 진행
             this.currentImage = null;
             this.createPuzzlePieces();
             this.showGameIntro();
         };
         
-        // 이미지 로드 시작 - 상대 경로로 수정
         defaultImage.src = './gima2.png';
     }
 
@@ -257,7 +313,6 @@ class PuzzleGame {
     }
 
     createColorPuzzlePieces() {
-        // 색상 퍼즐 조각 생성 (이미지가 없을 때)
         console.log('색상 퍼즐 조각 생성 중...');
         
         const colors = [
@@ -276,15 +331,21 @@ class PuzzleGame {
                 piece.dataset.position = row * this.cols + col;
                 piece.draggable = true;
                 
+                // 계산된 크기 사용
+                piece.style.width = `${this.pieceSize.width}px`;
+                piece.style.height = `${this.pieceSize.height}px`;
+                
                 const index = row * this.cols + col;
                 piece.style.backgroundColor = colors[index];
-                piece.style.border = '2px solid #333';
+                piece.style.border = '1px solid #333';
                 piece.style.display = 'flex';
                 piece.style.alignItems = 'center';
                 piece.style.justifyContent = 'center';
                 piece.style.color = '#fff';
                 piece.style.fontWeight = 'bold';
-                piece.style.fontSize = '12px';
+                piece.style.fontSize = '10px';
+                piece.style.boxSizing = 'border-box';
+                piece.style.borderRadius = '3px';
                 piece.textContent = `${index + 1}`;
                 
                 this.setupDragAndDrop(piece);
@@ -306,35 +367,21 @@ class PuzzleGame {
         piece.dataset.position = row * this.cols + col;
         piece.draggable = true;
 
-        // 고정 크기로 설정 (모바일 최적화)
-        const pieceWidth = 25;
-        const pieceHeight = 30;
-        
-        // 실제 그리드 크기
-        const totalWidth = pieceWidth * this.cols;
-        const totalHeight = pieceHeight * this.rows;
+        // 계산된 최적 크기 사용
+        const pieceWidth = this.pieceSize.width;
+        const pieceHeight = this.pieceSize.height;
+        const totalWidth = this.optimalImageSize.width;
+        const totalHeight = this.optimalImageSize.height;
 
-        // 이미지를 퍼즐 전체 크기에 맞게 스케일링
-        const imageAspect = img.width / img.height;
-        const puzzleAspect = totalWidth / totalHeight;
-        let scaledWidth, scaledHeight;
-        if (imageAspect > puzzleAspect) {
-            scaledHeight = totalHeight;
-            scaledWidth = scaledHeight * imageAspect;
-        } else {
-            scaledWidth = totalWidth;
-            scaledHeight = scaledWidth / imageAspect;
-        }
-        
-        // 배경 위치 계산
-        const backgroundX = -col * (scaledWidth / this.cols);
-        const backgroundY = -row * (scaledHeight / this.rows);
+        // 배경 위치 계산 (정확한 조각 분할)
+        const backgroundX = -col * pieceWidth;
+        const backgroundY = -row * pieceHeight;
         
         // 조각 스타일 설정
         piece.style.width = `${pieceWidth}px`;
         piece.style.height = `${pieceHeight}px`;
         piece.style.backgroundImage = `url(${this.currentImage})`;
-        piece.style.backgroundSize = `${scaledWidth}px ${scaledHeight}px`;
+        piece.style.backgroundSize = `${totalWidth}px ${totalHeight}px`;
         piece.style.backgroundPosition = `${backgroundX}px ${backgroundY}px`;
         piece.style.backgroundRepeat = 'no-repeat';
         piece.style.border = '1px solid #333';
@@ -344,6 +391,21 @@ class PuzzleGame {
         this.setupDragAndDrop(piece);
         this.setupTouchEvents(piece);
         return piece;
+    }
+    
+    recreatePuzzlePieces() {
+        // 기존 조각들 제거
+        this.clearAllSlots();
+        this.gridCells.forEach(cell => {
+            while (cell.firstChild) {
+                cell.removeChild(cell.firstChild);
+            }
+        });
+        
+        // 새로운 조각들 생성
+        if (this.currentImage) {
+            this.createPuzzlePieces();
+        }
     }
 
     setupDragAndDrop(piece) {

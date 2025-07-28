@@ -170,8 +170,8 @@ body {
 }
 
 .puzzle-grid {
-    width: min(50vw, 180px);
-    height: min(83vw, 300px);
+    width: var(--puzzle-width, 180px);
+    height: var(--puzzle-height, 300px);
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(5, 1fr);
@@ -196,8 +196,8 @@ body {
 }
 
 .puzzle-slot {
-    width: 25px;
-    height: 30px;
+    width: var(--piece-width, 25px);
+    height: var(--piece-height, 30px);
     border: 1px dashed #999;
     border-radius: 3px;
     display: flex;
