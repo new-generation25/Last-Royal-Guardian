@@ -214,8 +214,8 @@ class PuzzleGame {
     }
 
     setupPieceTouchEvents(piece) {
-        // 모바일 터치 이벤트만 활성화
-        if (!('ontouchstart' in window)) return;
+        // 모바일 터치 이벤트만 활성화 (실제 터치 디바이스에서만)
+        if (!('ontouchstart' in window) || window.innerWidth > 768) return;
         
         let startX, startY, currentX, currentY;
         let initialLeft, initialTop;
