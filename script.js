@@ -93,8 +93,8 @@ class PuzzleGame {
         const screenHeight = window.innerHeight;
         
         // 사용 가능한 영역 계산 (헤더, 버튼, 여백 제외)
-        const availableWidth = screenWidth * 0.9; // 90% 사용
-        const availableHeight = screenHeight * 0.6; // 60% 사용 (상하 여백 고려)
+        const availableWidth = Math.min(screenWidth * 0.8, 400); // 최대 400px
+        const availableHeight = Math.min(screenHeight * 0.7, 600); // 최대 600px
         
         // 3:5 비율에 맞는 최적 크기 계산
         let optimalWidth, optimalHeight;
@@ -109,9 +109,9 @@ class PuzzleGame {
             optimalHeight = optimalWidth * (5/3);
         }
         
-        // 최소/최대 크기 제한
-        optimalWidth = Math.max(150, Math.min(optimalWidth, 300));
-        optimalHeight = Math.max(250, Math.min(optimalHeight, 500));
+        // 최소 크기 보장 (더 크게 설정)
+        optimalWidth = Math.max(240, optimalWidth);   // 최소 240px
+        optimalHeight = Math.max(400, optimalHeight); // 최소 400px
         
         this.optimalImageSize = {
             width: optimalWidth,
